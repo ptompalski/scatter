@@ -1,0 +1,13 @@
+Package: scatter
+Title: Scatterplot with descriptive statistics
+Version: 0.0.0.9000
+Authors@R: person("Piotr", "Tompalski", email = "piotr.tompalski@gmail.com", role = c("aut", "cre"))
+Description: Contains functions to generate scatterplots and histograms that contain additional information on the differences between plotted variables (for scatterplot) or basic descriptive statistics (for histogram)
+Depends: R (>= 3.5.1)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+    ggplot2,
+    dplyr
+RoxygenNote: 6.1.1
