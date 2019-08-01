@@ -2,7 +2,7 @@
 #'
 #' @param x a vector of observed data.
 #' @param y a vector of predicted data.
-#' @param R2 Optional. Can be enabled or disabled by setting TRUE/FALSE. Can also be a value in cases where the R2 is calculated by other funtion.
+#' @param R2 Optional. Can be enabled or disabled by setting TRUE/FALSE. Can also be a value in cases where the R2 is calculated by other funtion. Can also be "cor" to calculate by squaring the correlation coefficient.
 #' @param axisorder Optional. Set to \code{PO} (predicted-observed) to plot predicted (\code{y}) on the y-axis (this is the default). Set to \code{OP} (observed-predicted) to plot observed (\code{x}) on the y-axis.
 #' @param xlab Optional. Title of the x-axis
 #' @param ylab Optional. Title of the y-axis
