@@ -7,6 +7,19 @@ scatterplots can include text summarizing the agreement metrics (e.g.,
 R², bias, RMSE) between two plotted variables, with support for grouped
 data and faceting.
 
+# Why?
+
+Scatterplots are one of the most frequently used visualizations in my
+daily work. While creating a scatterplot is straightforward, I wanted a
+version that would meet these specific needs:
+
+- Ensure the plot is always square.
+- Include a 1:1 reference line.
+- Display “predicted” values on the x-axis.
+- Provide an optional text panel showing agreement statistics.
+- Seamlessly handle grouped data, creating faceted plots with minimal
+  effort.
+
 # Installation
 
 ``` r
