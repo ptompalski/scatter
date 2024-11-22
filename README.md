@@ -1,53 +1,57 @@
-# scatter
 
-This package contains functions that allow to quickly calculate measures of model prediction accuracy (e.g. rmse), create scatterplots that contain text informing on the agreement between the two plotted variables. 
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## Installation 
-```
-install.packages("devtools")
+This package provides functions for quickly calculating measures of
+model prediction accuracy (e.g., RMSE) and creating enhanced
+scatterplots. The scatterplots can include text summarizing the
+agreement metrics (e.g., R², bias, RMSE) between two plotted variables,
+with support for grouped data and faceting.
+
+# Installation
+
+``` r
 devtools::install_github("ptompalski/scatter")
 library(scatter)
 ```
 
+# Features
 
-## Brief description of selected funcions
+- Calculate Model Prediction Accuracy: Use `agreement_metrics()` to
+  compute metrics like R2, bias and RMSE.
 
-Function `calc.error()` is useful for quickly calculating bias and RMSE (and other) between observed and predicted values. This function also check the statistical significance of the differences. For example:
+- Generate Scatterplots: Use `scatter()` to generate scatterplots with
+  optional agreement metrics text annotations, faceting for grouped
+  data.
 
-```
-ref <- iris$Sepal.Length
-est <- predict(lm(data=iris,iris$Sepal.Length~iris$Petal.Width))
-calc.error(reference = ref, estimate = est)
-```
-Optionally a grouping variable can be added:
-```
-grouping_var <- iris$Species
-calc.error(reference = ref, estimate = est,by = grouping_var)
-```
-I recommend setting the parameter `noinfo = F` during the first run and see how the absolute and relative bias are calculated.
+# Examples
 
-## Plot templates
+Simple scatterplot
 
-There are two plot templates: one for scatterplot (`scatter()`) and one for histogram (`h()`). 
+``` r
+library(dplyr)
+library(scatter)
 
+# some fake data
+df <- 
+tibble(
+  observed = c(rnorm(150, 10, 2)),
+  predicted = observed + rnorm(150,0, 1),
+  group = rep(c("A", "B", "C"), each = 50)          
+)
 
-Using:
-```
-ref <- iris$Sepal.Length
-est <- predict(lm(data=iris,iris$Sepal.Length ~ iris$Petal.Width))
-scatter(x = ref, y = est)
-```
-will produce a scatter plot with additional information (text box) on the bias and RMSE. Optionally you can disable this by setting `info = F`. 
-
-The default behaviour of `h()` is to plot a histogram with chosen descriptive statistics added in a corner. You can turn them off by setting `info = F`. You can also very easly define the width of the histogram bins (much easier than with standard `hist()`) with:
-```
-h(ref,0.1)
+scatter(df, observed, predicted)
 ```
 
+Scatterplot with agreement metrics
 
-Both `scatter()` and `h()` use ggplot2 package to produce plots. The returned ggplot objects can be 
-further modified with additional options:
-
+``` r
+scatter(df, observed, predicted, add_metrics = TRUE)
 ```
-h(iris$Sepal.Length) + theme_minimal()
+
+Grouped scatterplot with agreement metrics
+
+``` r
+df %>%
+  group_by(group) %>%
+  scatter(observed, predicted, add_metrics = TRUE)
 ```
