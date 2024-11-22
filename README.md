@@ -2,10 +2,10 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 This package provides functions for quickly calculating measures of
-model prediction accuracy (e.g., RMSE) and creating enhanced
-scatterplots. The scatterplots can include text summarizing the
-agreement metrics (e.g., R², bias, RMSE) between two plotted variables,
-with support for grouped data and faceting.
+model prediction accuracy and creating enhanced scatterplots. The
+scatterplots can include text summarizing the agreement metrics (e.g.,
+R², bias, RMSE) between two plotted variables, with support for grouped
+data and faceting.
 
 # Installation
 
@@ -29,6 +29,7 @@ Simple scatterplot
 
 ``` r
 library(dplyr)
+library(ggplot2)
 library(scatter)
 
 # some fake data
@@ -42,11 +43,15 @@ tibble(
 scatter(df, observed, predicted)
 ```
 
+![](man/figures/unnamed-chunk-3-1.png)<!-- -->
+
 Scatterplot with agreement metrics
 
 ``` r
 scatter(df, observed, predicted, add_metrics = TRUE)
 ```
+
+![](man/figures/unnamed-chunk-4-1.png)<!-- -->
 
 Grouped scatterplot with agreement metrics
 
@@ -55,3 +60,5 @@ df %>%
   group_by(group) %>%
   scatter(observed, predicted, add_metrics = TRUE)
 ```
+
+![](man/figures/unnamed-chunk-5-1.png)<!-- -->
