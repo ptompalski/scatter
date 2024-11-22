@@ -43,7 +43,7 @@ library(scatter)
 
 Simple scatterplot
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, fig.height=3.5}
 library(dplyr)
 library(ggplot2)
 library(scatter)
@@ -61,13 +61,13 @@ scatter(df, observed, predicted)
 
 
 Scatterplot with agreement metrics
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, fig.height=3.5}
 scatter(df, observed, predicted, add_metrics = TRUE)
 ```
 
 
 Grouped scatterplot with agreement metrics
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, fig.height=3.5}
 df %>%
   group_by(group) %>%
   scatter(observed, predicted, add_metrics = TRUE)
