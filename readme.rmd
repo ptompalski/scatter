@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 )
 ```
   
+# {scatter}
   
 This package provides functions for quickly calculating measures of model prediction accuracy and creating enhanced scatterplots. The scatterplots can include text summarizing the agreement metrics (e.g., R², bias, RMSE) between two plotted variables, with support for grouped data and faceting.
 

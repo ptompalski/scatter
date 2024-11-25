@@ -1,6 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+# {scatter}
+
 This package provides functions for quickly calculating measures of
 model prediction accuracy and creating enhanced scatterplots. The
 scatterplots can include text summarizing the agreement metrics (e.g.,
