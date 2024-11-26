@@ -8,7 +8,10 @@
 #' @param observed The name of the column containing observed values. Must be unquoted (e.g., `observed`).
 #' @param predicted The name of the column containing predicted values. Must be unquoted (e.g., `predicted`).
 #' @param add_overall Logical, default `TRUE`. If `TRUE`, an additional row is added with overall metrics calculated for the entire dataset.
-#'
+#' @param r2_method A character string indicating the method for calculating \(R^2\). 
+#'   Options are `"sum_of_squares"` (default) for the traditional \(R^2\) based on 
+#'   residual and total sums of squares, or `"correlation"` for the square of the 
+#'   Pearson correlation coefficient between observed and predicted values.
 #' @return A tibble containing the calculated metrics:
 #'   \describe{
 #'     \item{Grouping Variables}{Grouping variables from the input data, if present.}
@@ -48,11 +51,14 @@
 
 
 
-agreement_metrics <- function(data, observed, predicted, add_overall = TRUE) {
+agreement_metrics <- function(data, observed, predicted, add_overall = TRUE, r2_method = c("sum_of_squares", "correlation")) {
   # Ensure the input is a data frame or tibble
   if (!inherits(data, "data.frame")) {
     stop("The input must be a data frame or tibble.")
   }
+  
+  # Match the method argument
+  r2_method <- match.arg(r2_method)
   
   # Convert column names to symbols
   observed <- rlang::ensym(observed)
@@ -76,10 +82,17 @@ agreement_metrics <- function(data, observed, predicted, add_overall = TRUE) {
     
     # Metrics calculations
     residuals <- observed - predicted
-    ss_total <- sum((observed - mean(observed))^2)
-    ss_residual <- sum(residuals^2)
     
-    r2 <- 1 - (ss_residual / ss_total)
+    
+    # Calculate R2 based on selected method
+    if (r2_method == "sum_of_squares") {
+      ss_total <- sum((observed - mean(observed))^2)
+      ss_residual <- sum(residuals^2)
+      r2 <- 1 - (ss_residual / ss_total)
+    } else if (r2_method == "correlation") {
+      r2 <- cor(observed, predicted)^2
+    }
+    
     bias <- mean(predicted - observed)
     relative_bias <- (bias / mean(observed)) * 100
     rmse <- sqrt(mean(residuals^2))

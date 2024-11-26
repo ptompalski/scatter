@@ -4,7 +4,13 @@
 \alias{agreement_metrics}
 \title{Calculate Agreement Metrics for Observed and Predicted Values}
 \usage{
-agreement_metrics(data, observed, predicted, add_overall = TRUE)
+agreement_metrics(
+  data,
+  observed,
+  predicted,
+  add_overall = TRUE,
+  r2_method = c("sum_of_squares", "correlation")
+)
 }
 \arguments{
 \item{data}{A data frame or tibble containing the observed and predicted values, as well as any grouping variables.}
@@ -14,6 +20,11 @@ agreement_metrics(data, observed, predicted, add_overall = TRUE)
 \item{predicted}{The name of the column containing predicted values. Must be unquoted (e.g., `predicted`).}
 
 \item{add_overall}{Logical, default `TRUE`. If `TRUE`, an additional row is added with overall metrics calculated for the entire dataset.}
+
+\item{r2_method}{A character string indicating the method for calculating \(R^2\). 
+Options are `"sum_of_squares"` (default) for the traditional \(R^2\) based on 
+residual and total sums of squares, or `"correlation"` for the square of the 
+Pearson correlation coefficient between observed and predicted values.}
 }
 \value{
 A tibble containing the calculated metrics:

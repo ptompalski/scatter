@@ -4,7 +4,13 @@
 \alias{scatter}
 \title{Scatterplot with Observed and Predicted Values}
 \usage{
-scatter(data, observed, predicted, add_metrics = FALSE)
+scatter(
+  data,
+  observed,
+  predicted,
+  add_metrics = FALSE,
+  r2_method = c("sum_of_squares", "correlation")
+)
 }
 \arguments{
 \item{data}{A data frame or tibble. Can be grouped (using `dplyr::group_by`) to create faceted plots.}
@@ -15,6 +21,11 @@ scatter(data, observed, predicted, add_metrics = FALSE)
 
 \item{add_metrics}{Logical. If `TRUE`, agreement metrics (R², bias, RMSE) will be added 
 as text annotations to the plot. For grouped data, metrics are calculated and displayed for each group.}
+
+\item{r2_method}{A character string indicating the method for calculating \(R^2\). 
+Options are `"sum_of_squares"` (default) for the traditional \(R^2\) based on 
+residual and total sums of squares, or `"correlation"` for the square of the 
+Pearson correlation coefficient between observed and predicted values.}
 }
 \value{
 A ggplot object.

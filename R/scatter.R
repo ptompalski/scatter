@@ -9,6 +9,10 @@
 #' @param predicted The column name in `data` containing predicted values. Should be unquoted.
 #' @param add_metrics Logical. If `TRUE`, agreement metrics (R², bias, RMSE) will be added 
 #'   as text annotations to the plot. For grouped data, metrics are calculated and displayed for each group.
+#' @param r2_method A character string indicating the method for calculating \(R^2\). 
+#'   Options are `"sum_of_squares"` (default) for the traditional \(R^2\) based on 
+#'   residual and total sums of squares, or `"correlation"` for the square of the 
+#'   Pearson correlation coefficient between observed and predicted values.
 #'
 #' @details 
 #' The function dynamically calculates axis ranges based on the observed and predicted values 
@@ -42,11 +46,14 @@
 #'
 #' @export
 #' 
-scatter <- function(data, observed, predicted, add_metrics = FALSE) {
+scatter <- function(data, observed, predicted, add_metrics = FALSE,  r2_method = c("sum_of_squares", "correlation")) {
   # Ensure the observed and predicted columns exist
   if (!all(c(as.character(substitute(observed)), as.character(substitute(predicted))) %in% colnames(data))) {
     stop("The specified observed and predicted variables do not exist in the data.")
   }
+  
+  # Match the method argument
+  r2_method <- match.arg(r2_method)
   
   # Check if the data is grouped
   is_grouped <- dplyr::is_grouped_df(data)
@@ -74,7 +81,7 @@ scatter <- function(data, observed, predicted, add_metrics = FALSE) {
   }
   
   if(add_metrics & !is_grouped) {
-    metrics <- agreement_metrics(data = data, observed = {{observed}}, predicted = {{predicted}}) 
+    metrics <- agreement_metrics(data = data, observed = {{observed}}, predicted = {{predicted}}, add_overall = FALSE, r2_method = r2_method) 
     
     # Create a formatted text string for the textbox
     metrics_text <- paste0(
@@ -100,7 +107,7 @@ scatter <- function(data, observed, predicted, add_metrics = FALSE) {
   }
   
   if(add_metrics & is_grouped) {
-    metrics <- agreement_metrics(data = data, observed = {{observed}}, predicted = {{predicted}}, add_overall = F) %>%
+    metrics <- agreement_metrics(data = data, observed = {{observed}}, predicted = {{predicted}}, add_overall = F,  r2_method = r2_method) %>%
       mutate(metrics_text = paste0(
         "R²: ", round(R2, 2),"\n",
         "bias: ", round(bias, 2), " (",round(bias_perc, 2), "%)\n",
