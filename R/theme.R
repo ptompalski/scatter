@@ -20,7 +20,7 @@
 #'   theme_baseR(font_size = 14, font_family = "serif")
 #'
 #' @export
-theme_baseR <- function(font_size = 12, font_family = "sans") {
+theme_baseR <- function(font_size = 10, font_family = "sans") {
   theme(
     panel.background = element_rect(fill = "white", color = NA),
     panel.grid.major = element_blank(),

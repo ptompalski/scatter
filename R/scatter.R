@@ -46,7 +46,11 @@
 #'
 #' @export
 #' 
-scatter <- function(data, observed, predicted, add_metrics = FALSE,  r2_method = c("sum_of_squares", "correlation")) {
+scatter <- function(data, observed, predicted, 
+                    add_metrics = FALSE,  
+                    r2_method = c("sum_of_squares", "correlation")
+                    ) {
+  
   # Ensure the observed and predicted columns exist
   if (!all(c(as.character(substitute(observed)), as.character(substitute(predicted))) %in% colnames(data))) {
     stop("The specified observed and predicted variables do not exist in the data.")
