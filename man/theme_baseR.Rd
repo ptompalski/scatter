@@ -4,7 +4,7 @@
 \alias{theme_baseR}
 \title{Custom ggplot Theme}
 \usage{
-theme_baseR(font_size = 12, font_family = "sans")
+theme_baseR(font_size = 10, font_family = "sans")
 }
 \arguments{
 \item{font_size}{Numeric. The base font size for text elements in the plot. Default is 12.}
