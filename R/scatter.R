@@ -89,9 +89,9 @@ scatter <- function(data, observed, predicted,
     
     # Create a formatted text string for the textbox
     metrics_text <- paste0(
-      "R²: ", round(metrics$R2, 2),"\n",
-      "bias: ", round(metrics$bias, 2), " (",round(metrics$bias_perc, 2), "%)\n",
-      "RMSE: ", round(metrics$RMSE, 2), " (",round(metrics$RMSE_perc, 2), "%)"
+      "bias: ", round(metrics$bias, 2), " (",round(metrics$bias_perc, 2), "%)<br>",
+      "RMSE: ", round(metrics$RMSE, 2), " (",round(metrics$RMSE_perc, 2), "%)<br>",
+      "R²: ", round(metrics$R2, 2)
     )
     
     ann_x <- min(range_values)
@@ -99,12 +99,14 @@ scatter <- function(data, observed, predicted,
     ann_hjust <- 0
     ann_vjust <- 0.9
     
-    ann <- ggplot2::annotate("text", 
+    ann <- ggplot2::annotate(geom = "richtext", 
                              x = ann_x, 
                              y = ann_y, 
                              label = metrics_text, 
                              hjust = ann_hjust, 
-                             vjust = ann_vjust)
+                             vjust = ann_vjust,
+                             fill = alpha(colour = "white", 0.50),
+                             label.color = NA)
     
     # Add the textbox to the plot
     p <- p + ann
@@ -112,17 +114,39 @@ scatter <- function(data, observed, predicted,
   
   if(add_metrics & is_grouped) {
     metrics <- agreement_metrics(data = data, observed = {{observed}}, predicted = {{predicted}}, add_overall = F,  r2_method = r2_method) %>%
-      mutate(metrics_text = paste0(
-        "R²: ", round(R2, 2),"\n",
-        "bias: ", round(bias, 2), " (",round(bias_perc, 2), "%)\n",
-        "RMSE: ", round(RMSE, 2), " (",round(RMSE_perc, 2), "%)"
-      ))
+      # mutate(metrics_text = paste0(
+      #   "R²: ", round(R2, 2),"\n",
+      #   "bias: ", round(bias, 2), " (",round(bias_perc, 2), "%)\n",
+      #   "RMSE: ", round(RMSE, 2), " (",round(RMSE_perc, 2), "%)"
+      # ))
     
-    p <- p + geom_text(
-      data = metrics,
-      aes(x = min(range_values), y = max(range_values), label = metrics_text),
-      hjust = 0, vjust = 1, inherit.aes = FALSE, size = 3
-    )
+    mutate(metrics_text = paste0(
+      "<span>",
+      "bias: ", round(bias, 2), " (",round(bias_perc, 2), "%)<br>",
+      "RMSE: ", round(RMSE, 2), " (",round(RMSE_perc, 2), "%)<br>",
+      "R²: ", round(R2, 2),
+      "<span>"
+    ))
+    
+    
+    
+    
+    # p <- p + 
+    #   geom_text(
+    #   data = metrics,
+    #   aes(x = min(range_values), y = max(range_values), label = metrics_text),
+    #   hjust = 0, vjust = 1, inherit.aes = FALSE, size = 3
+    # )
+    
+    p <-p + 
+      geom_richtext(
+        data = metrics,
+        aes(x = min(range_values), y = max(range_values), label = metrics_text),
+        hjust = 0, vjust = 1, inherit.aes = FALSE, size = 3,
+        fill = alpha(colour = "white", 0.50),
+        label.color = NA
+      )
+    
   }
   
   return(p)
