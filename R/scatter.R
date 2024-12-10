@@ -184,8 +184,8 @@ scatter <- function(data, truth, estimate,
         custom_labeller <- ggplot2::as_labeller(setNames(metrics_text$label, metrics_text[[facet_vars]]))
         
         p <- p + 
-          dplyr::facet_wrap(
-            ?ggplot2::vars(!!!rlang::syms(facet_vars)),
+          ggplot2::facet_wrap(
+            ggplot2::vars(!!!rlang::syms(facet_vars)),
             scales = "fixed",
             labeller = custom_labeller
           ) + ggplot2::theme(
