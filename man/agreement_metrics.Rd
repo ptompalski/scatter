@@ -2,69 +2,58 @@
 % Please edit documentation in R/agreement_metrics.R
 \name{agreement_metrics}
 \alias{agreement_metrics}
-\title{Calculate Agreement Metrics for Observed and Predicted Values}
+\title{Compute Agreement Metrics for Predictions}
 \usage{
 agreement_metrics(
   data,
-  observed,
-  predicted,
-  add_overall = TRUE,
-  r2_method = c("sum_of_squares", "correlation")
+  truth,
+  estimate,
+  metrics = list(yardstick::rsq, yardstick::msd, yardstick::rmse, yardstick::mape),
+  label = FALSE
 )
 }
 \arguments{
-\item{data}{A data frame or tibble containing the observed and predicted values, as well as any grouping variables.}
+\item{data}{A data frame containing the observed (`truth`) and predicted (`estimate`) values.}
 
-\item{observed}{The name of the column containing observed values. Must be unquoted (e.g., `observed`).}
+\item{truth}{The column in `data` representing the true values. Use tidy evaluation (e.g., `{{}}`).}
 
-\item{predicted}{The name of the column containing predicted values. Must be unquoted (e.g., `predicted`).}
+\item{estimate}{The column in `data` representing the predicted values. Use tidy evaluation (e.g., `{{}}`).}
 
-\item{add_overall}{Logical, default `TRUE`. If `TRUE`, an additional row is added with overall metrics calculated for the entire dataset.}
+\item{metrics}{A list of metrics to compute. Metrics can be almost any function from the `yardstick` 
+package (e.g., `rsq`, `rmse`, `mape`, `msd`), provided they follow the `yardstick` format. Defaults to 
+`list(rsq, msd, rmse, mape)`.}
 
-\item{r2_method}{A character string indicating the method for calculating \(R^2\). 
-Options are `"sum_of_squares"` (default) for the traditional \(R^2\) based on 
-residual and total sums of squares, or `"correlation"` for the square of the 
-Pearson correlation coefficient between observed and predicted values.}
+\item{label}{Logical. If `TRUE`, the function creates a concatenated string summarizing all 
+computed metrics in a new column called `label`. Defaults to `FALSE`.}
 }
 \value{
-A tibble containing the calculated metrics:
-  \describe{
-    \item{Grouping Variables}{Grouping variables from the input data, if present.}
-    \item{n}{Number of valid (non-missing) observations used for calculations.}
-    \item{R2}{Coefficient of determination (R-squared).}
-    \item{bias}{Mean difference between predicted and observed values.}
-    \item{bias_perc}{Relative bias, expressed as a percentage.}
-    \item{RMSE}{Root Mean Squared Error.}
-    \item{RMSE_perc}{Relative RMSE, expressed as a percentage.}
-  }
+A data frame with the computed metrics. If `label = TRUE`, the output includes a `label` column 
+summarizing all metrics.
 }
 \description{
-Computes various metrics (e.g., R2, bias, RMSE) to evaluate the agreement
-between observed and predicted values. Supports grouped data and includes
-an option to add overall metrics for the entire dataset.
+This function calculates various metrics to assess the agreement between 
+predicted and true values. It leverages the flexibility of the `yardstick` 
+package to compute a variety of metrics, which can be specified through the 
+`metrics` parameter.
 }
 \details{
-If the input data is grouped using `group_by()`, metrics are calculated separately for each group.
-When `add_overall = TRUE`, a row with overall metrics (calculated on the entire dataset) is added to the result.
-This function supports grouping variables of any type but ensures that grouping variables are consistently of type `character` in the output.
+The function internally uses the `metric_set` function from `yardstick` to handle 
+the specified metrics. The results are returned in a wide format, with each metric 
+as a column. All numeric metrics are rounded to two decimal places for readability.
 }
 \examples{
 library(dplyr)
+library(yardstick)
+library(tidyr)
 
-# Example data
-data <- tibble(
-  species = c("A", "A", "B", "B", "C", "C"),
-  region = c("North", "North", "South", "South", "East", "East"),
-  observed = c(10, 15, 20, NA, 25, 30),
-  predicted = c(12, 14, 22, NA, 23, 28)
+# Example dataset
+data <- data.frame(
+  truth = c(3, 5, 2.5, 7),
+  estimate = c(2.8, 5.1, 2.6, 7.2)
 )
 
-# Grouped calculation with overall statistics
-data \%>\%
-  group_by(species, region) \%>\%
-  agreement_metrics(observed = observed, predicted = predicted)
+# Compute default metrics
+agreement_metrics(data, truth = truth, estimate = estimate)
 
-# Ungrouped calculation
-agreement_metrics(data, observed = observed, predicted = predicted)
 
 }

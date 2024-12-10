@@ -2,64 +2,74 @@
 % Please edit documentation in R/scatter.R
 \name{scatter}
 \alias{scatter}
-\title{Scatterplot with Observed and Predicted Values}
+\title{Scatterplot with Truth and Estimate Values}
 \usage{
 scatter(
   data,
-  observed,
-  predicted,
-  add_metrics = FALSE,
-  r2_method = c("sum_of_squares", "correlation")
+  truth,
+  estimate,
+  metrics = list(yardstick::rsq, yardstick::msd, yardstick::rmse, yardstick::mape),
+  metrics_position = "inside"
 )
 }
 \arguments{
 \item{data}{A data frame or tibble. Can be grouped (using `dplyr::group_by`) to create faceted plots.}
 
-\item{observed}{The column name in `data` containing observed values. Should be unquoted.}
+\item{truth}{The column name in `data` containing truth values. Should be unquoted.}
 
-\item{predicted}{The column name in `data` containing predicted values. Should be unquoted.}
+\item{estimate}{The column name in `data` containing estimate values. Should be unquoted.}
 
-\item{add_metrics}{Logical. If `TRUE`, agreement metrics (R², bias, RMSE) will be added 
-as text annotations to the plot. For grouped data, metrics are calculated and displayed for each group.}
+\item{metrics}{A list of metrics to compute and display. Metrics can include almost any function from the `yardstick` package 
+(e.g., `rsq`, `rmse`, `mape`). Defaults to `list(rsq, msd, rmse, mape)`. Set to `NULL` to disable.}
 
-\item{r2_method}{A character string indicating the method for calculating \(R^2\). 
-Options are `"sum_of_squares"` (default) for the traditional \(R^2\) based on 
-residual and total sums of squares, or `"correlation"` for the square of the 
-Pearson correlation coefficient between observed and predicted values.}
+\item{metrics_position}{A character string indicating where to display metrics. Options are `"inside"` 
+(as annotations within the plot) or `"outside"` (as subtitles or facet labels). Defaults to `"inside"`.}
 }
 \value{
 A ggplot object.
 }
 \description{
-This function creates a scatterplot comparing observed and predicted values.
-It supports grouped data, adding facets for each group, and optionally includes 
-agreement metrics as text annotations in the plot.
+This function creates a scatterplot comparing `truth` and `estimate` values. It supports grouped data, 
+adding facets for each group, and can optionally include agreement metrics as text annotations in the plot. 
+Metrics can be positioned either inside the plot area or outside as subtitles or facet labels.
 }
 \details{
-The function dynamically calculates axis ranges based on the observed and predicted values 
-and ensures the plot is square by using `coord_fixed()`. For grouped data, it uses `facet_wrap` 
-to create separate scatterplots for each group. 
+The function dynamically calculates axis ranges based on the `truth` and `estimate` values, ensuring a square plot using 
+`coord_fixed()`. For grouped data, it uses `facet_wrap` to create separate scatterplots for each group.
 
-Agreement metrics are calculated using the `agreement_metrics` function.
+Agreement metrics are calculated using the `agreement_metrics` function, and their display depends on the value of 
+`metrics_position`. For grouped data with `metrics_position = "outside"`, metrics are added to the facet labels, 
+while for `metrics_position = "inside"`, they are displayed within each plot as annotations.
 }
 \examples{
+library(dplyr)
+library(ggplot2)
+
 # Example data
 set.seed(123)
 df <- data.frame(
   group = rep(c("A", "B", "C"), each = 50),
-  observed = c(rnorm(50, 10, 2), rnorm(50, 20, 3), rnorm(50, 15, 4)),
-  predicted = c(rnorm(50, 10, 2), rnorm(50, 20, 3), rnorm(50, 15, 4))
+  truth = c(rnorm(50, 10, 2), rnorm(50, 20, 3), rnorm(50, 15, 4)),
+  estimate = c(rnorm(50, 10, 2), rnorm(50, 20, 3), rnorm(50, 15, 4))
 )
 
 # Simple scatterplot
-scatter(df, observed, predicted)
+scatter(df, truth, estimate)
 
-# Scatterplot with agreement metrics
-scatter(df, observed, predicted, add_metrics = TRUE)
+# Scatterplot with agreement metrics (inside plot)
+scatter(df, truth, estimate, metrics = list(rsq, mape), metrics_position = "inside")
 
-# Grouped scatterplot with agreement metrics
-df \%>\% 
-group_by(group) \%>\%
-scatter(observed, predicted, add_metrics = TRUE)
+# Scatterplot with agreement metrics (outside plot as subtitle)
+scatter(df, truth, estimate, metrics = list(rsq, rmse), metrics_position = "outside")
+
+# Grouped scatterplot with agreement metrics inside
+df \%>\%
+  group_by(group) \%>\%
+  scatter(truth, estimate, metrics = list(rsq, mape), metrics_position = "inside")
+
+# Grouped scatterplot with agreement metrics outside as facet labels
+df \%>\%
+  group_by(group) \%>\%
+  scatter(truth, estimate, metrics = list(rsq, rmse), metrics_position = "outside")
 
 }
