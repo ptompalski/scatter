@@ -47,7 +47,7 @@ Metrics can be positioned either inside the plot area or outside as subtitles or
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">truth</span>,</span>
 <span>  <span class="va">estimate</span>,</span>
-<span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu">yardstick</span><span class="fu">::</span><span class="va"><a href="https://yardstick.tidymodels.org/reference/rsq.html" class="external-link">rsq</a></span>, <span class="fu">yardstick</span><span class="fu">::</span><span class="va"><a href="https://yardstick.tidymodels.org/reference/msd.html" class="external-link">msd</a></span>, <span class="fu">yardstick</span><span class="fu">::</span><span class="va"><a href="https://yardstick.tidymodels.org/reference/rmse.html" class="external-link">rmse</a></span>, <span class="fu">yardstick</span><span class="fu">::</span><span class="va"><a href="https://yardstick.tidymodels.org/reference/mape.html" class="external-link">mape</a></span><span class="op">)</span>,</span>
+<span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rsq</span>, <span class="va">msd</span>, <span class="va">rmse</span>, <span class="va">mape</span><span class="op">)</span>,</span>
 <span>  metrics_position <span class="op">=</span> <span class="st">"inside"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -106,27 +106,27 @@ while for `metrics_position = "inside"`, they are displayed within each plot as 
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Simple scatterplot</span></span></span>
 <span class="r-in"><span><span class="fu">scatter</span><span class="op">(</span><span class="va">df</span>, <span class="va">truth</span>, <span class="va">estimate</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in pivot_wider(., names_from = .metric, values_from = .estimate):</span> could not find function "pivot_wider"</span>
+<span class="r-plt img"><img src="scatter-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Scatterplot with agreement metrics (inside plot)</span></span></span>
 <span class="r-in"><span><span class="fu">scatter</span><span class="op">(</span><span class="va">df</span>, <span class="va">truth</span>, <span class="va">estimate</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rsq</span>, <span class="va">mape</span><span class="op">)</span>, metrics_position <span class="op">=</span> <span class="st">"inside"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in pivot_wider(., names_from = .metric, values_from = .estimate):</span> could not find function "pivot_wider"</span>
+<span class="r-plt img"><img src="scatter-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Scatterplot with agreement metrics (outside plot as subtitle)</span></span></span>
 <span class="r-in"><span><span class="fu">scatter</span><span class="op">(</span><span class="va">df</span>, <span class="va">truth</span>, <span class="va">estimate</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rsq</span>, <span class="va">rmse</span><span class="op">)</span>, metrics_position <span class="op">=</span> <span class="st">"outside"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in pivot_wider(., names_from = .metric, values_from = .estimate):</span> could not find function "pivot_wider"</span>
+<span class="r-plt img"><img src="scatter-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Grouped scatterplot with agreement metrics inside</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">scatter</span><span class="op">(</span><span class="va">truth</span>, <span class="va">estimate</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rsq</span>, <span class="va">mape</span><span class="op">)</span>, metrics_position <span class="op">=</span> <span class="st">"inside"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in pivot_wider(., names_from = .metric, values_from = .estimate):</span> could not find function "pivot_wider"</span>
+<span class="r-plt img"><img src="scatter-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Grouped scatterplot with agreement metrics outside as facet labels</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">scatter</span><span class="op">(</span><span class="va">truth</span>, <span class="va">estimate</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rsq</span>, <span class="va">rmse</span><span class="op">)</span>, metrics_position <span class="op">=</span> <span class="st">"outside"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in pivot_wider(., names_from = .metric, values_from = .estimate):</span> could not find function "pivot_wider"</span>
+<span class="r-plt img"><img src="scatter-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
