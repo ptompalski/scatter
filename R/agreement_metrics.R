@@ -47,10 +47,10 @@
 agreement_metrics <- function(data, 
                               truth, 
                               estimate, 
-                              metrics=list(yardstick::rsq,
-                                           yardstick::msd,
-                                           yardstick::rmse,
-                                           yardstick::mape), 
+                              metrics=list(rsq,
+                                           msd,
+                                           rmse,
+                                           mape), 
                               label=FALSE) {
   
   metrics <- metric_set(!!!metrics) 
@@ -64,8 +64,8 @@ agreement_metrics <- function(data,
   
   m <- 
     m %>%
-    pivot_wider(names_from = .metric, values_from = .estimate) %>% 
-    mutate(across(where(is.numeric),~round(.x,2)) )
+    tidyr::pivot_wider(names_from = .metric, values_from = .estimate) %>% 
+    dplyr::mutate(dplyr::across(dplyr::where(is.numeric),~round(.x,2)) )
   
   if(label) {
   
@@ -73,25 +73,11 @@ agreement_metrics <- function(data,
   
   m<-
     m %>%
-    rowwise() %>%
-    mutate(label = paste(metric_names, as.character(c_across(all_of(metric_names))), sep = ": ", collapse = "; "))
+    dplyr::rowwise() %>%
+    dplyr::mutate(label = paste(metric_names, as.character(dplyr::c_across(dplyr::all_of(metric_names))), sep = ": ", collapse = "; "))
   
   }
   return(m)
   
 }
 
-# calc_metrics(data, truth = observed, estimate = predicted, metrics = list(rsq, rmse, mape), label = T)
-# 
-# 
-# data %>% group_by(group) %>%
-# calc_metrics(truth = observed, estimate = predicted, metrics = list(rsq, rmse, mape, mpe, huber_loss), label = T)
-# 
-# 
-# m <- calc_metrics(data, truth = observed, estimate = predicted, metrics = list(rsq, rmse, mape), label = F)
-# metric_names <- names(m)
-# 
-# 
-# m %>%
-#   rowwise() %>%
-#   mutate(label = paste(metric_names, as.character(c_across(all_of(metric_names))), sep = ": ", collapse = "; "))

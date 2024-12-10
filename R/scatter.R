@@ -55,12 +55,12 @@
 #'
 #' @export
 scatter <- function(data, truth, estimate, 
-                     metrics = list(yardstick::rsq,
-                                    yardstick::msd,
-                                    yardstick::rmse,
-                                    yardstick::mape),
-                     metrics_position="inside"
-                     
+                    metrics = list(rsq,
+                                   msd,
+                                   rmse,
+                                   mape),
+                    metrics_position="inside"
+                    
 ) {
   
   # Ensure the truth and estimate columns exist
@@ -81,14 +81,15 @@ scatter <- function(data, truth, estimate,
                         na.rm = TRUE)
   
   # Start building the plot
-  p <- ggplot(data, aes(y = {{truth}}, x = {{estimate}})) +
-    geom_point(shape = 1, size = 2) +  
-    geom_abline(intercept = 0, slope = 1, color = "grey50") +  # Add 1:1 line
-    labs(
+  p <- 
+    ggplot2::ggplot(data, aes(y = {{truth}}, x = {{estimate}})) +
+    ggplot2::geom_point(shape = 1, size = 2) +  
+    ggplot2::geom_abline(intercept = 0, slope = 1, color = "grey50") +  # Add 1:1 line
+    ggplot2::labs(
       y = as.character(substitute(truth)),
       x = as.character(substitute(estimate))
     ) +
-    coord_fixed(xlim = range_values, ylim = range_values) +  # Ensure equal axis limits and square plot
+    ggplot2::coord_fixed(xlim = range_values, ylim = range_values) +  # Ensure equal axis limits and square plot
     theme_baseR()  # Apply custom theme
   
   # Add faceting if the data is grouped
@@ -98,24 +99,24 @@ scatter <- function(data, truth, estimate,
     #how many grouping vars
     groups_count <- length(facet_vars)
     
-    p <- p + facet_wrap(vars(!!!rlang::syms(facet_vars)), scales = "fixed")
+    p <- p + ggplot2::facet_wrap(vars(!!!rlang::syms(facet_vars)), scales = "fixed")
   }
   
   if(add_metrics & !is_grouped) {
     
     #calculate metrics for the ungrouped scenario
     metrics_text <- agreement_metrics(data = data, 
-                                 truth = {{truth}}, 
-                                 estimate = {{estimate}}, 
-                                 metrics={{metrics}}, 
-                                 label=TRUE ) %>%
-      pull(label)
+                                      truth = {{truth}}, 
+                                      estimate = {{estimate}}, 
+                                      metrics={{metrics}}, 
+                                      label=TRUE ) %>%
+      dplyr::pull(label)
     
     #if display is as subtitle the leave as is
     # if display is inside the plot, then change ; to <br>
     if(metrics_position=="inside") {
       
-      metrics_text <- str_replace_all(string = metrics_text , pattern = "; ", replacement = "<br>")
+      metrics_text <- stringr::str_replace_all(string = metrics_text , pattern = "; ", replacement = "<br>")
       
       ann_x <- min(range_values)
       ann_y <- max(range_values)
@@ -136,7 +137,7 @@ scatter <- function(data, truth, estimate,
     
     # if metrics outside then use subtitle
     if(metrics_position=="outside") {
-      p <- p + labs(subtitle = metrics_text)
+      p <- p + ggplot2::labs(subtitle = metrics_text)
     }
   }
   
@@ -144,23 +145,24 @@ scatter <- function(data, truth, estimate,
     
     #calculate metrics for the grouped scenario
     metrics_text <- agreement_metrics(data = data, 
-                                 truth = {{truth}}, 
-                                 estimate = {{estimate}}, 
-                                 metrics={{metrics}}, 
-                                 label=TRUE ) 
+                                      truth = {{truth}}, 
+                                      estimate = {{estimate}}, 
+                                      metrics={{metrics}}, 
+                                      label=TRUE ) 
     
     
     if(metrics_position=="inside") {
       
       metrics_text <- 
-        metrics_text %>% mutate(label = str_replace_all(string = label , pattern = "; ", replacement = "<br>"))
+        metrics_text %>% 
+        dplyr::mutate(label = stringr::str_replace_all(string = label , pattern = "; ", replacement = "<br>"))
       
       p <-p +
-        geom_richtext(
+        ggtext::geom_richtext(
           data = metrics_text,
           aes(x = min(range_values), y = max(range_values), label = label),
           hjust = 0, vjust = 1, inherit.aes = FALSE, size = 3,
-          fill = alpha(colour = "white", 0.50),
+          fill = scales::alpha(colour = "white", 0.50),
           label.color = NA
         )
       
@@ -173,59 +175,59 @@ scatter <- function(data, truth, estimate,
         #modify the labels 
         metrics_text <- 
           metrics_text %>%
-          mutate(label = paste0(
+          dplyr::mutate(label = paste0(
             (!!!rlang::syms(facet_vars)),"<br>", 
             label # text size could be adjusted here
           ))
         
         
-        custom_labeller <- as_labeller(setNames(metrics_text$label, metrics_text[[facet_vars]]))
+        custom_labeller <- ggplot2::as_labeller(setNames(metrics_text$label, metrics_text[[facet_vars]]))
         
-        p <- p + facet_wrap(
-          vars(!!!rlang::syms(facet_vars)),
-          scales = "fixed",
-          labeller = custom_labeller
-        ) + theme(
-          strip.text = element_textbox(halign = 0.5)
-        )
+        p <- p + 
+          dplyr::facet_wrap(
+            ?ggplot2::vars(!!!rlang::syms(facet_vars)),
+            scales = "fixed",
+            labeller = custom_labeller
+          ) + ggplot2::theme(
+            strip.text = ggtext::element_textbox(halign = 0.5)
+          )
       } 
       
       if (groups_count > 1) {
-
+        
         # if more than one grouping variable then they need to be combined to make labeller function to work
         metrics_text <- metrics_text %>%
-          rowwise() %>%
-          mutate(
-            group_label = paste(across(all_of(facet_vars)), collapse = " | "),
+          dplyr::rowwise() %>%
+          dplyr::mutate(
+            group_label = paste(dplyr::across(dplyr::all_of(facet_vars)), collapse = " | "),
             label = paste0(group_label, "<br>", label)
           ) %>%
-          ungroup()
+          dplyr::ungroup()
         
         
         
         data <- data %>% 
-          mutate(
-            group_label = paste(!!!syms(facet_vars), sep = " | ")
+          dplyr::mutate(
+            group_label = paste(!!!rlang::syms(facet_vars), sep = " | ")
           )
         
-        custom_labeller <- as_labeller(setNames(metrics_text$label, 
-                                                metrics_text$group_label))
-                                       # default=label_wrap_gen())#doesn't work
+        custom_labeller <- ggplot2::as_labeller(setNames(metrics_text$label, 
+                                                         metrics_text$group_label))
+        # default=label_wrap_gen())#doesn't work
         
-        p <- p + facet_wrap(
-          ~group_label,
-          scales = "fixed",
-          labeller = custom_labeller
-        ) + theme(
-          strip.text = element_textbox(halign = 0.5)
-        )
-        
+        p <- p + 
+          ggplot2::facet_wrap(
+            ~group_label,
+            scales = "fixed",
+            labeller = custom_labeller
+          ) + 
+          ggplot2::theme(
+            strip.text = ggtext::element_textbox(halign = 0.5)
+          )
+       
       }
-      
-    }
-    
+    }  
   }
-  
   return(p)
 }
 
