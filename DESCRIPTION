@@ -4,11 +4,11 @@ Version: 0.1.2
 Authors@R: person("Piotr", "Tompalski", email = "piotr.tompalski@gmail.com", role = c("aut", "cre"))
 Description: This package provides tools for creating scatterplots to compare observed and predicted values, with optional agreement metrics displayed as annotations. 
     The plots support grouped data and faceting.
-Depends: R (>= 3.5.1)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Depends:
+    R (>= 3.5.1)
     yardstick,
     ggplot2,
     ggtext

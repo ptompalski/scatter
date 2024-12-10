@@ -8,7 +8,7 @@ scatter(
   data,
   truth,
   estimate,
-  metrics = list(yardstick::rsq, yardstick::msd, yardstick::rmse, yardstick::mape),
+  metrics = list(rsq, msd, rmse, mape),
   metrics_position = "inside"
 )
 }
