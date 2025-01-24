@@ -8,7 +8,7 @@ agreement_metrics(
   data,
   truth,
   estimate,
-  metrics = list(rsq, msd, rmse, mape),
+  metrics = list(rsq, msd, mpe, rmse, rrmse),
   label = FALSE
 )
 }
@@ -21,7 +21,7 @@ agreement_metrics(
 
 \item{metrics}{A list of metrics to compute. Metrics can be almost any function from the `yardstick` 
 package (e.g., `rsq`, `rmse`, `mape`, `msd`), provided they follow the `yardstick` format. Defaults to 
-`list(rsq, msd, rmse, mape)`.}
+`list(rsq, msd, mpe, rmse, rrmse)`.}
 
 \item{label}{Logical. If `TRUE`, the function creates a concatenated string summarizing all 
 computed metrics in a new column called `label`. Defaults to `FALSE`.}

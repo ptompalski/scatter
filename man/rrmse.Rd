@@ -32,10 +32,7 @@ unquoted variable name. For `_vec()` functions, a `numeric` vector.}
 \item{na_rm}{A `logical` value indicating whether `NA`
 values should be stripped before the computation proceeds.}
 
-\item{case_weights}{The optional column identifier for case weights. This
-should be an unquoted column name that evaluates to a numeric column in
-`data`. For `_vec()` functions, a numeric vector,
-[hardhat::importance_weights()], or [hardhat::frequency_weights()].}
+\item{case_weights}{Currently not implemented.}
 }
 \description{
 Calculate the relative root mean squared error. `rrmse()` expresses

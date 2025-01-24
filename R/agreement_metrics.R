@@ -10,7 +10,7 @@
 #' @param estimate The column in `data` representing the predicted values. Use tidy evaluation (e.g., `{{}}`).
 #' @param metrics A list of metrics to compute. Metrics can be almost any function from the `yardstick` 
 #'   package (e.g., `rsq`, `rmse`, `mape`, `msd`), provided they follow the `yardstick` format. Defaults to 
-#'   `list(rsq, msd, rmse, mape)`.
+#'   `list(rsq, msd, mpe, rmse, rrmse)`.
 #' @param label Logical. If `TRUE`, the function creates a concatenated string summarizing all 
 #'   computed metrics in a new column called `label`. Defaults to `FALSE`.
 #'
@@ -49,8 +49,9 @@ agreement_metrics <- function(data,
                               estimate, 
                               metrics=list(rsq,
                                            msd,
+                                           mpe,
                                            rmse,
-                                           mape), 
+                                           rrmse), 
                               label=FALSE) {
   
   metrics <- metric_set(!!!metrics) 
