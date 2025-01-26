@@ -21,7 +21,8 @@ agreement_metrics(
 
 \item{metrics}{A list of metrics to compute. Metrics can be almost any function from the `yardstick` 
 package (e.g., `rsq`, `rmse`, `mape`, `msd`), provided they follow the `yardstick` format. Defaults to 
-`list(rsq, msd, mpe, rmse, rrmse)`.}
+`list(rsq, msd, mpe, rmse, rrmse)`. Can also be a named list of metrics to compute (e.g. `list(bias=msd, "bias%"=mpe)`.
+Names are then used instead of the `yardstick` metric names.}
 
 \item{label}{Logical. If `TRUE`, the function creates a concatenated string summarizing all 
 computed metrics in a new column called `label`. Defaults to `FALSE`.}
