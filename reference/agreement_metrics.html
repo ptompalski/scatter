@@ -74,7 +74,8 @@ package to compute a variety of metrics, which can be specified through the
 <dt id="arg-metrics">metrics<a class="anchor" aria-label="anchor" href="#arg-metrics"></a></dt>
 <dd><p>A list of metrics to compute. Metrics can be almost any function from the `yardstick`
 package (e.g., `rsq`, `rmse`, `mape`, `msd`), provided they follow the `yardstick` format. Defaults to
-`list(rsq, msd, mpe, rmse, rrmse)`.</p></dd>
+`list(rsq, msd, mpe, rmse, rrmse)`. Can also be a named list of metrics to compute (e.g. `list(bias=msd, "bias<!-- %"=mpe)`. -->
+Names are then used instead of the `yardstick` metric names.</p></dd>
 
 
 <dt id="arg-label">label<a class="anchor" aria-label="anchor" href="#arg-label"></a></dt>
