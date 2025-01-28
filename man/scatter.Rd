@@ -9,7 +9,8 @@ scatter(
   truth,
   estimate,
   metrics = list(rsq, msd, mpe, rmse, rrmse),
-  metrics_position = "inside"
+  metrics_position = "inside",
+  metrics_inside_placement = "upperleft"
 )
 }
 \arguments{
@@ -24,6 +25,9 @@ scatter(
 
 \item{metrics_position}{A character string indicating where to display metrics. Options are `"inside"` 
 (as annotations within the plot) or `"outside"` (as subtitle or facet labels). Defaults to `"inside"`.}
+
+\item{metrics_inside_placement}{A character string indicating the position of the metrics within the plot. 
+Options are "upperright", "upperleft", "lowerright", or "lowerleft". Defaults to "upperright".}
 }
 \value{
 A ggplot object.
@@ -57,7 +61,7 @@ df <- data.frame(
 scatter(df, truth, estimate)
 
 # Scatterplot with agreement metrics (inside plot)
-scatter(df, truth, estimate, metrics = list(rsq, mape), metrics_position = "inside")
+scatter(df, truth, estimate, metrics = list(rsq, mape))
 
 # Scatterplot with agreement metrics (outside plot as subtitle)
 scatter(df, truth, estimate, metrics = list(rsq, rmse), metrics_position = "outside")
@@ -65,7 +69,7 @@ scatter(df, truth, estimate, metrics = list(rsq, rmse), metrics_position = "outs
 # Grouped scatterplot with agreement metrics inside
 df \%>\%
   group_by(group) \%>\%
-  scatter(truth, estimate, metrics = list(rsq, mape), metrics_position = "inside")
+  scatter(truth, estimate, metrics = list(rsq,rmse,rrmse), metrics_position = "inside")
 
 # Grouped scatterplot with agreement metrics outside as facet labels
 df \%>\%
