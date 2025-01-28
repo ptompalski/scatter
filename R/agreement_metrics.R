@@ -55,6 +55,7 @@ agreement_metrics <- function(data,
                                             rrmse), 
                                label=FALSE) {
   
+  
   #save metric names (if provided)
   custom_metrics_names<- names(metrics)
   
@@ -69,6 +70,8 @@ agreement_metrics <- function(data,
   
   metric_names <- unique(m$.metric)
   
+  # print(metric_names)
+  # print(custom_metrics_names)
   
   m <- 
     m %>%
@@ -80,13 +83,14 @@ agreement_metrics <- function(data,
   if(!is.null(custom_metrics_names)) {
     
     custom_metrics_names[custom_metrics_names == ""] <- metric_names[custom_metrics_names == ""]
+    
+    colnames(m)[match(metric_names, colnames(m))] <- custom_metrics_names
+    
     metric_names <- custom_metrics_names
-    names(m) <- metric_names
   }
   
+  
   if(label) {
-    
-    # ind <- length(names(m))-length(metric_names) #to determine how many columsn to skip
     
     m<-
       m %>%
@@ -97,5 +101,3 @@ agreement_metrics <- function(data,
   return(m)
   
 }
-
-

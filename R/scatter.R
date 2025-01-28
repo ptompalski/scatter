@@ -8,9 +8,9 @@
 #' @param truth The column name in `data` containing truth values. Should be unquoted.
 #' @param estimate The column name in `data` containing estimate values. Should be unquoted.
 #' @param metrics A list of metrics to compute and display. Metrics can include almost any function from the `yardstick` package 
-#'   (e.g., `rsq`, `rmse`, `mape`). Defaults to `list(rsq, msd, rmse, mape)`. Set to `NULL` to disable.
+#'   (e.g., `rsq`, `rmse`, `mape`). Defaults to `list(rsq, msd, mpe, rmse, rrmse)`. Set to `NULL` to disable.
 #' @param metrics_position A character string indicating where to display metrics. Options are `"inside"` 
-#'   (as annotations within the plot) or `"outside"` (as subtitles or facet labels). Defaults to `"inside"`.
+#'   (as annotations within the plot) or `"outside"` (as subtitle or facet labels). Defaults to `"inside"`.
 #'
 #' @details
 #' The function dynamically calculates axis ranges based on the `truth` and `estimate` values, ensuring a square plot using 
@@ -55,10 +55,7 @@
 #'
 #' @export
 scatter <- function(data, truth, estimate, 
-                    metrics = list(rsq,
-                                   msd,
-                                   rmse,
-                                   mape),
+                    metrics = list(rsq, msd, mpe, rmse, rrmse),
                     metrics_position="inside"
                     
 ) {
@@ -70,6 +67,8 @@ scatter <- function(data, truth, estimate,
   
   #check if any metrics provided
   add_metrics <- ifelse(!is.null(metrics), TRUE, FALSE)
+  
+  
   
   
   # Check if the data is grouped
