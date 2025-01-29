@@ -13,7 +13,11 @@
 #'   (as annotations within the plot) or `"outside"` (as subtitle or facet labels). Defaults to `"inside"`.
 #' @param metrics_inside_placement A character string indicating the position of the metrics within the plot. 
 #'   Options are "upperright", "upperleft", "lowerright", or "lowerleft". Defaults to "upperright".
-#'
+#' @param ... Additional parameters to control point aesthetics, including:
+#'   - `points_color`: Color of points (default is "black").
+#'   - `points_size`: Size of points (default is 2).
+#'   - `points_shape`: Shape of points (default is 1).
+#'   - `points_alpha`: Transparency of points (default is 1).
 #' @details
 #' The function dynamically calculates axis ranges based on the `truth` and `estimate` values, ensuring a square plot using 
 #' `coord_fixed()`. For grouped data, it uses `facet_wrap` to create separate scatterplots for each group.
@@ -59,12 +63,20 @@
 scatter <- function(data, truth, estimate, 
                     metrics = list(rsq, msd, mpe, rmse, rrmse),
                     metrics_position = "inside",
-                    metrics_inside_placement = "upperleft") {
+                    metrics_inside_placement = "upperleft",
+                    ...) {
   
   # Ensure the truth and estimate columns exist
   if (!all(c(as.character(substitute(truth)), as.character(substitute(estimate))) %in% colnames(data))) {
     stop("The specified truth and estimate variables do not exist in the data.")
   }
+  
+  # Capture additional parameters
+  extra_params <- list(...)
+  points_color <- extra_params$points_color %||% "black"
+  points_size <- extra_params$points_size %||% 2
+  points_shape <- extra_params$points_shape %||% 1
+  points_alpha <- extra_params$points_alpha %||% 1
   
   # Check if any metrics provided
   add_metrics <- ifelse(!is.null(metrics), TRUE, FALSE)
@@ -80,7 +92,7 @@ scatter <- function(data, truth, estimate,
   # Start building the plot
   p <- 
     ggplot2::ggplot(data, aes(y = {{truth}}, x = {{estimate}})) +
-    ggplot2::geom_point(shape = 1, size = 2) +  
+    ggplot2::geom_point(shape = points_shape, size = points_size, color = points_color, alpha = points_alpha) +  
     ggplot2::geom_abline(intercept = 0, slope = 1, color = "grey50") +  # Add 1:1 line
     ggplot2::labs(
       y = as.character(substitute(truth)),
