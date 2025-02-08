@@ -10,7 +10,8 @@ scatter(
   estimate,
   metrics = list(rsq, msd, mpe, rmse, rrmse),
   metrics_position = "inside",
-  metrics_inside_placement = "upperleft"
+  metrics_inside_placement = "upperleft",
+  ...
 )
 }
 \arguments{
@@ -28,6 +29,12 @@ scatter(
 
 \item{metrics_inside_placement}{A character string indicating the position of the metrics within the plot. 
 Options are "upperright", "upperleft", "lowerright", or "lowerleft". Defaults to "upperright".}
+
+\item{...}{Additional parameters to control point aesthetics, including:
+- `points_color`: Color of points (default is "black").
+- `points_size`: Size of points (default is 2).
+- `points_shape`: Shape of points (default is 1).
+- `points_alpha`: Transparency of points (default is 1).}
 }
 \value{
 A ggplot object.

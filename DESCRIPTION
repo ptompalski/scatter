@@ -17,6 +17,7 @@ Imports:
     tidyr,
     rlang,
     stringr,
-    scales
+    scales,
+    magrittr
 RoxygenNote: 7.3.2
 URL: https://ptompalski.github.io/scatter/

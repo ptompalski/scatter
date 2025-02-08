@@ -65,8 +65,8 @@ agreement_metrics <- function(data,
   
   m <-
     data %>% 
-    metrics({{truth}}, {{estimate}}) %>%
-    select(-.estimator) 
+    yardstick::metrics({{truth}}, {{estimate}}) %>%
+    dplyr::select(-.estimator) 
   
   metric_names <- unique(m$.metric)
   
