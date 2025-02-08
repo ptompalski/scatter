@@ -49,7 +49,8 @@ Metrics can be positioned either inside the plot area or outside as subtitles or
 <span>  <span class="va">estimate</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rsq</span>, <span class="va">msd</span>, <span class="va">mpe</span>, <span class="va">rmse</span>, <span class="va">rrmse</span><span class="op">)</span>,</span>
 <span>  metrics_position <span class="op">=</span> <span class="st">"inside"</span>,</span>
-<span>  metrics_inside_placement <span class="op">=</span> <span class="st">"upperleft"</span></span>
+<span>  metrics_inside_placement <span class="op">=</span> <span class="st">"upperleft"</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -82,6 +83,14 @@ Metrics can be positioned either inside the plot area or outside as subtitles or
 <dt id="arg-metrics-inside-placement">metrics_inside_placement<a class="anchor" aria-label="anchor" href="#arg-metrics-inside-placement"></a></dt>
 <dd><p>A character string indicating the position of the metrics within the plot.
 Options are "upperright", "upperleft", "lowerright", or "lowerleft". Defaults to "upperright".</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional parameters to control point aesthetics, including:
+- `points_color`: Color of points (default is "black").
+- `points_size`: Size of points (default is 2).
+- `points_shape`: Shape of points (default is 1).
+- `points_alpha`: Transparency of points (default is 1).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -123,14 +132,14 @@ while for `metrics_position = "inside"`, they are displayed within each plot as 
 <span class="r-plt img"><img src="scatter-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Grouped scatterplot with agreement metrics inside</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">scatter</span><span class="op">(</span><span class="va">truth</span>, <span class="va">estimate</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rsq</span>,<span class="va">rmse</span>,<span class="va">rrmse</span><span class="op">)</span>, metrics_position <span class="op">=</span> <span class="st">"inside"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="scatter-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Grouped scatterplot with agreement metrics outside as facet labels</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">scatter</span><span class="op">(</span><span class="va">truth</span>, <span class="va">estimate</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rsq</span>, <span class="va">rmse</span><span class="op">)</span>, metrics_position <span class="op">=</span> <span class="st">"outside"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="scatter-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
