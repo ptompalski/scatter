@@ -63,10 +63,17 @@ agreement_metrics <- function(data,
   metrics <- metric_set(!!!metrics) 
   
   
-  m <-
-    data %>% 
-    yardstick::metrics({{truth}}, {{estimate}}) %>%
-    dplyr::select(-.estimator) 
+  # m <-
+  #   data %>% 
+  #   yardstick::metrics({{truth}}, {{estimate}}) %>%
+  #   dplyr::select(-.estimator) 
+  
+  # Instead of calling yardstick::metrics(...), call the metric set:
+  m <- metrics(data, truth = {{truth}}, estimate = {{estimate}})
+  
+  # Remove the .estimator column (usually "standard" or "macro" for classification metrics)
+  m <- dplyr::select(m, -.estimator)
+  
   
   metric_names <- unique(m$.metric)
   
