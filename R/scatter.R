@@ -8,7 +8,7 @@
 #' @param truth The column name in `data` containing truth values. Should be unquoted.
 #' @param estimate The column name in `data` containing estimate values. Should be unquoted.
 #' @param metrics A list of metrics to compute and display. Metrics can include almost any function from the `yardstick` package 
-#'   (e.g., `rsq`, `rmse`, `mape`). Defaults to `list(rsq, msd, mpe, rmse, rrmse)`. Set to `NULL` to disable.
+#'   (e.g., `rsq`, `rmse`, `mape`). Defaults to `list(rsq, md, rmd, rmse, rrmse)`. Set to `NULL` to disable.
 #' @param metrics_position A character string indicating where to display metrics. Options are `"inside"` 
 #'   (as annotations within the plot) or `"outside"` (as subtitle or facet labels). Defaults to `"inside"`.
 #' @param metrics_inside_placement A character string indicating the position of the metrics within the plot. 
@@ -61,7 +61,7 @@
 #'
 #' @export
 scatter <- function(data, truth, estimate, 
-                    metrics = list(rsq, msd, mpe, rmse, rrmse),
+                    metrics = list(rsq, md, rmd, rmse, rrmse),
                     metrics_position = "inside",
                     metrics_inside_placement = "upperleft",
                     ...) {
