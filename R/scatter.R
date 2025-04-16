@@ -19,6 +19,8 @@
 #'   - `points_shape`: Shape of points (default is 1).
 #'   - `points_alpha`: Transparency of points (default is 1).
 #'   - `text_size`: text size for the displayed metrics (default is 10 pt)
+#'   - `text_background_alpha`: change the transparency of the metrics text background (default is 0.5). Disable with 0 (fully transparent)
+#'   - `metrics_nlines`: allow to split the metrics text into n lines (default is 1 line)
 #'   
 #' @details
 #' The function dynamically calculates axis ranges based on the `truth` and `estimate` values, ensuring a square plot using 
@@ -79,7 +81,9 @@ scatter <- function(data, truth, estimate,
   points_size <- extra_params$points_size %||% 2
   points_shape <- extra_params$points_shape %||% 1
   points_alpha <- extra_params$points_alpha %||% 1
+  text_background_alpha <- extra_params$text_background_alpha %||% 0.5
   text_size <- extra_params$text_size %||% 10
+  
   metrics_nlines <- extra_params$metrics_nlines %||% 1
   
   # Check if any metrics provided
@@ -147,15 +151,29 @@ scatter <- function(data, truth, estimate,
                                size = text_size / 2.845276,
                                hjust = ifelse(metrics_inside_placement %in% c("upperright", "lowerright"), 1, 0),
                                vjust = ifelse(metrics_inside_placement %in% c("upperleft", "upperright"), 1, 0),
-                               fill = alpha(colour = "white", 0.50),
+                               fill = alpha(colour = "white", text_background_alpha),
                                label.color = NA)
       
       p <- p + ann
     }
     
+    # if (metrics_position == "outside") {
+    #   p <- p + ggplot2::labs(subtitle = metrics_text)
+    # }
+    
     if (metrics_position == "outside") {
+      # Split and wrap metrics_text if needed
+      if (metrics_nlines > 1) {
+        parts <- stringr::str_split(metrics_text, ";\\s*")[[1]]
+        n_per_line <- ceiling(length(parts) / metrics_nlines)
+        grouped <- split(parts, ceiling(seq_along(parts) / n_per_line))
+        wrapped <- paste(sapply(grouped, paste, collapse = "; "), collapse = "\n")
+        metrics_text <- wrapped
+      }
+      
       p <- p + ggplot2::labs(subtitle = metrics_text)
     }
+    
   }
   
   if (add_metrics & is_grouped) {
@@ -178,7 +196,7 @@ scatter <- function(data, truth, estimate,
           vjust = ifelse(metrics_inside_placement %in% c("upperleft", "upperright"), 1, 0),
           inherit.aes = FALSE, 
           size = text_size / 2.845276, #converting to pt
-          fill = scales::alpha(colour = "white", 0.50),
+          fill = scales::alpha(colour = "white", text_background_alpha),
           label.color = NA
         )
     }
@@ -189,12 +207,30 @@ scatter <- function(data, truth, estimate,
       if(groups_count == 1) {
         
         #modify the labels 
+        # metrics_text <- 
+        #   metrics_text %>%
+        #   dplyr::mutate(label = paste0(
+        #     (!!!rlang::syms(facet_vars)),"<br>", 
+        #     label # text size could be adjusted here
+        #   ))
+        
         metrics_text <- 
           metrics_text %>%
-          dplyr::mutate(label = paste0(
-            (!!!rlang::syms(facet_vars)),"<br>", 
-            label # text size could be adjusted here
-          ))
+          dplyr::mutate(
+            label = {
+              label_parts <- stringr::str_split(label, ";\\s*")
+              label_wrapped <- purrr::map_chr(label_parts, function(parts) {
+                if (metrics_nlines > 1) {
+                  n_per_line <- ceiling(length(parts) / metrics_nlines)
+                  grouped <- split(parts, ceiling(seq_along(parts) / n_per_line))
+                  paste(sapply(grouped, paste, collapse = "; "), collapse = "<br>")
+                } else {
+                  paste(parts, collapse = "; ")
+                }
+              })
+              paste0(!!rlang::sym(facet_vars), "<br>", label_wrapped)
+            }
+          )
         
         
         custom_labeller <- ggplot2::as_labeller(setNames(metrics_text$label, metrics_text[[facet_vars]]))
@@ -212,11 +248,29 @@ scatter <- function(data, truth, estimate,
       if (groups_count > 1) {
         
         # if more than one grouping variable then they need to be combined to make labeller function to work
+        # metrics_text <- metrics_text %>%
+        #   dplyr::rowwise() %>%
+        #   dplyr::mutate(
+        #     group_label = paste(dplyr::across(dplyr::all_of(facet_vars)), collapse = " | "),
+        #     label = paste0(group_label, "<br>", label)
+        #   ) %>%
+        #   dplyr::ungroup()
+        
         metrics_text <- metrics_text %>%
           dplyr::rowwise() %>%
           dplyr::mutate(
             group_label = paste(dplyr::across(dplyr::all_of(facet_vars)), collapse = " | "),
-            label = paste0(group_label, "<br>", label)
+            label = {
+              parts <- stringr::str_split(label, ";\\s*")[[1]]
+              if (metrics_nlines > 1) {
+                n_per_line <- ceiling(length(parts) / metrics_nlines)
+                grouped <- split(parts, ceiling(seq_along(parts) / n_per_line))
+                wrapped <- paste(sapply(grouped, paste, collapse = "; "), collapse = "<br>")
+              } else {
+                wrapped <- paste(parts, collapse = "; ")
+              }
+              paste0(group_label, "<br>", wrapped)
+            }
           ) %>%
           dplyr::ungroup()
         
