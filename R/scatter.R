@@ -18,6 +18,8 @@
 #'   - `points_size`: Size of points (default is 2).
 #'   - `points_shape`: Shape of points (default is 1).
 #'   - `points_alpha`: Transparency of points (default is 1).
+#'   - `text_size`: text size for the displayed metrics (default is 10 pt)
+#'   
 #' @details
 #' The function dynamically calculates axis ranges based on the `truth` and `estimate` values, ensuring a square plot using 
 #' `coord_fixed()`. For grouped data, it uses `facet_wrap` to create separate scatterplots for each group.
@@ -77,6 +79,8 @@ scatter <- function(data, truth, estimate,
   points_size <- extra_params$points_size %||% 2
   points_shape <- extra_params$points_shape %||% 1
   points_alpha <- extra_params$points_alpha %||% 1
+  text_size <- extra_params$text_size %||% 10
+  metrics_nlines <- extra_params$metrics_nlines %||% 1
   
   # Check if any metrics provided
   add_metrics <- ifelse(!is.null(metrics), TRUE, FALSE)
@@ -140,6 +144,7 @@ scatter <- function(data, truth, estimate,
                                x = ann_x, 
                                y = ann_y, 
                                label = metrics_text, 
+                               size = text_size / 2.845276,
                                hjust = ifelse(metrics_inside_placement %in% c("upperright", "lowerright"), 1, 0),
                                vjust = ifelse(metrics_inside_placement %in% c("upperleft", "upperright"), 1, 0),
                                fill = alpha(colour = "white", 0.50),
@@ -171,15 +176,75 @@ scatter <- function(data, truth, estimate,
           aes(x = ann_x, y = ann_y, label = label),
           hjust = ifelse(metrics_inside_placement %in% c("upperright", "lowerright"), 1, 0),
           vjust = ifelse(metrics_inside_placement %in% c("upperleft", "upperright"), 1, 0),
-          inherit.aes = FALSE, size = 3,
+          inherit.aes = FALSE, 
+          size = text_size / 2.845276, #converting to pt
           fill = scales::alpha(colour = "white", 0.50),
           label.color = NA
         )
     }
     
-    # if (metrics_position == "outside") {
-    #   # Logic for grouped data with metrics outside remains unchanged
-    # }
+    
+    if(metrics_position=="outside") {
+      
+      if(groups_count == 1) {
+        
+        #modify the labels 
+        metrics_text <- 
+          metrics_text %>%
+          dplyr::mutate(label = paste0(
+            (!!!rlang::syms(facet_vars)),"<br>", 
+            label # text size could be adjusted here
+          ))
+        
+        
+        custom_labeller <- ggplot2::as_labeller(setNames(metrics_text$label, metrics_text[[facet_vars]]))
+        
+        p <- p + 
+          ggplot2::facet_wrap(
+            ggplot2::vars(!!!rlang::syms(facet_vars)),
+            scales = "fixed",
+            labeller = custom_labeller
+          ) + ggplot2::theme(
+            strip.text = ggtext::element_textbox(halign = 0.5, size = text_size)
+          )
+      } 
+      
+      if (groups_count > 1) {
+        
+        # if more than one grouping variable then they need to be combined to make labeller function to work
+        metrics_text <- metrics_text %>%
+          dplyr::rowwise() %>%
+          dplyr::mutate(
+            group_label = paste(dplyr::across(dplyr::all_of(facet_vars)), collapse = " | "),
+            label = paste0(group_label, "<br>", label)
+          ) %>%
+          dplyr::ungroup()
+        
+        
+        
+        data <- data %>% 
+          dplyr::mutate(
+            group_label = paste(!!!rlang::syms(facet_vars), sep = " | ")
+          )
+        
+        custom_labeller <- ggplot2::as_labeller(setNames(metrics_text$label, 
+                                                         metrics_text$group_label))
+        # default=label_wrap_gen())#doesn't work
+        
+        p <- p + 
+          ggplot2::facet_wrap(
+            ~group_label,
+            scales = "fixed",
+            labeller = custom_labeller
+          ) + 
+          ggplot2::theme(
+            strip.text = ggtext::element_textbox(halign = 0.5, size=text_size)
+          )
+        
+      }
+    }  
+    
+    
   }
   
   return(p)

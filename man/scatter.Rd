@@ -34,7 +34,8 @@ Options are "upperright", "upperleft", "lowerright", or "lowerleft". Defaults to
 - `points_color`: Color of points (default is "black").
 - `points_size`: Size of points (default is 2).
 - `points_shape`: Shape of points (default is 1).
-- `points_alpha`: Transparency of points (default is 1).}
+- `points_alpha`: Transparency of points (default is 1).
+- `text_size`: text size for the displayed metrics (default is 10 pt)}
 }
 \value{
 A ggplot object.
