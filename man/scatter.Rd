@@ -36,7 +36,7 @@ Options are "upperright", "upperleft", "lowerright", or "lowerleft". Defaults to
 - `points_shape`: Shape of points (default is 1).
 - `points_alpha`: Transparency of points (default is 1).
 - `text_size`: text size for the displayed metrics (default is 10 pt)
-- `text_background_alpha`: change the transparency of the metrics text background (default is 0.5). Disable with 1 (fully transparent)
+- `text_background_alpha`: change the transparency of the metrics text background (default is 0.5). Disable with 0 (fully transparent)
 - `metrics_nlines`: allow to split the metrics text into n lines (default is 1 line)}
 }
 \value{

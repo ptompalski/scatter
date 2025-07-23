@@ -8,33 +8,43 @@
 \usage{
 rrmse(data, ...)
 
-\method{rrmse}{data.frame}(data, truth, estimate, na_rm = TRUE, case_weights = NULL, ...)
+\method{rrmse}{data.frame}(
+  data,
+  truth,
+  estimate,
+  na_rm = TRUE,
+  case_weights = NULL,
+  normalization = "mean",
+  ...
+)
 
-rrmse_vec(truth, estimate, na_rm = TRUE, case_weights = NULL, ...)
+rrmse_vec(
+  truth,
+  estimate,
+  na_rm = TRUE,
+  case_weights = NULL,
+  normalization = "mean",
+  ...
+)
 }
 \arguments{
 \item{data}{A `data.frame` containing the columns specified by the `truth`
 and `estimate` arguments.}
 
-\item{...}{Not currently used.}
+\item{...}{Additional arguments passed to lower-level functions.}
 
-\item{truth}{The column identifier for the true results
-(that is `numeric`). This should be an unquoted column name although
-this argument is passed by expression and supports
-[quasiquotation][rlang::quasiquotation] (you can unquote column
-names). For `_vec()` functions, a `numeric` vector.}
+\item{truth}{The column identifier for the true results (numeric).}
 
-\item{estimate}{The column identifier for the predicted
-results (that is also `numeric`). As with `truth` this can be
-specified different ways but the primary method is to use an
-unquoted variable name. For `_vec()` functions, a `numeric` vector.}
+\item{estimate}{The column identifier for the predicted results (numeric).}
 
-\item{na_rm}{A `logical` value indicating whether `NA`
-values should be stripped before the computation proceeds.}
+\item{na_rm}{A `logical` value indicating whether `NA` values should be removed.}
 
 \item{case_weights}{Currently not implemented.}
+
+\item{normalization}{Character string specifying the normalization method:
+`"mean"` (default) or `"range"`.}
 }
 \description{
 Calculate the relative root mean squared error. `rrmse()` expresses
-the RMSE as a proportion of the range of the true values.
+the RMSE as a proportion of either the **mean** or **range** of the true values.
 }

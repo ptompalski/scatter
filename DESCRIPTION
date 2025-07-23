@@ -1,6 +1,6 @@
 Package: scatter
 Title: Scatterplots with descriptive statistics
-Version: 0.1.9
+Version: 0.1.10
 Authors@R: person("Piotr", "Tompalski", email = "piotr.tompalski@gmail.com", role = c("aut", "cre"))
 Description: This package provides tools for creating scatterplots to compare observed and predicted values, with optional agreement metrics displayed as annotations. 
     The plots support grouped data and faceting.
