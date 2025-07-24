@@ -94,7 +94,7 @@ rrmse_impl <- function(truth, estimate, case_weights, normalization = "mean") {
     range = max(truth, na.rm = TRUE) - min(truth, na.rm = TRUE)
   )
   
-  if (denom == 0) {
+  if (is.na(denom) || denom == 0) {
     return(NA_real_)
   }
   
