@@ -17,6 +17,7 @@ scatter(
   density_method = c("auto", "kde2d", "neighbors"),
   density_show_legend = FALSE,
   density_switch_n = 5000,
+  swap_axes = FALSE,
   ...
 )
 }
@@ -56,6 +57,13 @@ the selected `density_scale` (either "Point density" or "Relative density (per f
 
 \item{density_switch_n}{Integer threshold used when `point_style="auto"` (default 5000).}
 
+\item{swap_axes}{Logical; if `FALSE` (default), `truth` is mapped to the
+x-axis and `estimate` to the y-axis. If `TRUE`, the axes are swapped, with
+`estimate` on the x-axis and `truth` on the y-axis (i.e., the previous
+behavior of the function). This option affects only the visual orientation of the plot
+and does  affect how agreement metrics are calculated — metrics are
+always computed as `metric(truth, estimate)` regardless of axis order.}
+
 \item{...}{Additional parameters to control plot appearance and advanced color options:
 - `points_color`: Color of points (default `"black"`). Ignored for `pointdensity` when density is mapped.
 - `points_size`: Size of points (default `2`).
@@ -72,15 +80,16 @@ the selected `density_scale` (either "Point density" or "Relative density (per f
 A ggplot object.
 }
 \description{
-This function creates a scatterplot comparing `truth` and `estimate` values. It supports grouped data,
+This function creates a scatterplot comparing `truth` (typically observed)
+and `estimate` (typically predicted) values. By default, `truth` is mapped
+to the x-axis and `estimate` to the y-axis, but this can be reversed using
+the `swap_axes` argument. It supports grouped data,
 adding facets for each group, and can optionally include agreement metrics as text annotations in the plot.
 Metrics can be positioned either inside the plot area or outside as subtitles or facet labels.
-}
-\details{
 The function can automatically switch from simple points (`geom_point()`) to density-colored points
 (`ggpointdensity::geom_pointdensity()`) when large sample sizes are detected, helping to mitigate overplotting.
-
-
+}
+\details{
 The function dynamically calculates axis ranges based on the `truth` and `estimate` values, ensuring a square plot using
 `coord_fixed()`. For grouped data, it uses `facet_wrap()` to create separate scatterplots for each group.
 
@@ -92,6 +101,23 @@ or overridden entirely with a custom ggplot2 scale passed via `density_scale_cus
 Agreement metrics are calculated using the `agreement_metrics()` function and displayed according to `metrics_position`.
 For grouped data with `metrics_position = "outside"`, metrics are added to the facet labels; with `"inside"`, they are displayed
 as text annotations within each plot.
+
+The choice of placing observed (`truth`) values on the x-axis and predicted
+(`estimate`) values on the y-axis follows recommendations from the statistical
+and ecological modelling literature. Piñeiro et al. (2008) argued that
+regression and agreement diagnostics are most interpretable when the observed
+variable is treated as the y axis. More recently, Pauwels et al.
+(2019) revisited this issue and presented counterarguments supporting the
+opposite convention. The `swap_axes` argument is provided to accommodate both
+perspectives, with the default setting placing the observed values on the x-axis.
+
+Piñeiro, G., Perelman, S., Guerschman, J. P., & Paruelo, J. M. (2008).
+  How to evaluate models: observed vs. predicted or predicted vs. observed?
+  Ecological Modelling, 216(3–4), 316–322.
+
+Pauwels, V. R. N., Chen, Y., & Sadegh, M. (2019).
+  Revisiting the observed–predicted scatterplot debate: is the 1:1 line really the best reference?
+  Ecological Modelling, 407, 108802.
 }
 \examples{
 library(dplyr)

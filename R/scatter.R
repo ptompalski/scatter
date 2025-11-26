@@ -1,9 +1,11 @@
 #' Scatterplot with Truth and Estimate Values
 #'
-#' This function creates a scatterplot comparing `truth` and `estimate` values. It supports grouped data,
+#' This function creates a scatterplot comparing `truth` (typically observed)
+#' and `estimate` (typically predicted) values. By default, `truth` is mapped
+#' to the x-axis and `estimate` to the y-axis, but this can be reversed using
+#' the `swap_axes` argument. It supports grouped data,
 #' adding facets for each group, and can optionally include agreement metrics as text annotations in the plot.
 #' Metrics can be positioned either inside the plot area or outside as subtitles or facet labels.
-#'
 #' The function can automatically switch from simple points (`geom_point()`) to density-colored points
 #' (`ggpointdensity::geom_pointdensity()`) when large sample sizes are detected, helping to mitigate overplotting.
 #'
@@ -30,6 +32,12 @@
 #' @param density_show_legend Logical; show a colorbar for density. Defaults to `FALSE`. If `TRUE`, the legend label reflects
 #'   the selected `density_scale` (either "Point density" or "Relative density (per facet)"). Ignored if `point_style="point"`.
 #' @param density_switch_n Integer threshold used when `point_style="auto"` (default 5000).
+#' @param swap_axes Logical; if `FALSE` (default), `truth` is mapped to the
+#'   x-axis and `estimate` to the y-axis. If `TRUE`, the axes are swapped, with
+#'   `estimate` on the x-axis and `truth` on the y-axis (i.e., the previous
+#'   behavior of the function). This option affects only the visual orientation of the plot
+#'   and does  affect how agreement metrics are calculated — metrics are
+#'   always computed as `metric(truth, estimate)` regardless of axis order.
 #' @param ... Additional parameters to control plot appearance and advanced color options:
 #'   - `points_color`: Color of points (default `"black"`). Ignored for `pointdensity` when density is mapped.
 #'   - `points_size`: Size of points (default `2`).
@@ -54,6 +62,23 @@
 #' Agreement metrics are calculated using the `agreement_metrics()` function and displayed according to `metrics_position`.
 #' For grouped data with `metrics_position = "outside"`, metrics are added to the facet labels; with `"inside"`, they are displayed
 #' as text annotations within each plot.
+#'
+#' The choice of placing observed (`truth`) values on the x-axis and predicted
+#' (`estimate`) values on the y-axis follows recommendations from the statistical
+#' and ecological modelling literature. Piñeiro et al. (2008) argued that
+#' regression and agreement diagnostics are most interpretable when the observed
+#' variable is treated as the y axis. More recently, Pauwels et al.
+#' (2019) revisited this issue and presented counterarguments supporting the
+#' opposite convention. The `swap_axes` argument is provided to accommodate both
+#' perspectives, with the default setting placing the observed values on the x-axis.
+#'
+#' Piñeiro, G., Perelman, S., Guerschman, J. P., & Paruelo, J. M. (2008).
+#'   How to evaluate models: observed vs. predicted or predicted vs. observed?
+#'   Ecological Modelling, 216(3–4), 316–322.
+#'
+#' Pauwels, V. R. N., Chen, Y., & Sadegh, M. (2019).
+#'   Revisiting the observed–predicted scatterplot debate: is the 1:1 line really the best reference?
+#'   Ecological Modelling, 407, 108802.
 #'
 #' @return A ggplot object.
 #'
@@ -149,6 +174,7 @@ scatter <- function(
   density_method = c("auto", "kde2d", "neighbors"),
   density_show_legend = FALSE,
   density_switch_n = 5000,
+  swap_axes = FALSE,
   ...
 ) {
   point_style <- match.arg(point_style)
@@ -174,7 +200,7 @@ scatter <- function(
 
   points_color <- extra_params$points_color %||% "black"
   points_size <- extra_params$points_size %||% 2
-  points_shape <- extra_params$points_shape %||% 1
+  # points_shape <- extra_params$points_shape %||% 1
   points_alpha <- extra_params$points_alpha %||% 1
   text_background_alpha <- extra_params$text_background_alpha %||% 0.5
   text_size <- extra_params$text_size %||% 10
@@ -198,6 +224,17 @@ scatter <- function(
     na.rm = TRUE
   )
 
+  # axis mapping logic
+  if (isTRUE(swap_axes)) {
+    aes_mapping <- ggplot2::aes(x = {{ estimate }}, y = {{ truth }})
+    x_label <- as.character(substitute(estimate))
+    y_label <- as.character(substitute(truth))
+  } else {
+    aes_mapping <- ggplot2::aes(x = {{ truth }}, y = {{ estimate }})
+    x_label <- as.character(substitute(truth))
+    y_label <- as.character(substitute(estimate))
+  }
+
   # choose style (if auto)
   if (point_style == "auto") {
     point_style <- if (nrow(data) >= density_switch_n) {
@@ -207,9 +244,17 @@ scatter <- function(
     }
   }
 
+  # default shape depends on final point_style
+  if (!is.null(extra_params$points_shape)) {
+    points_shape <- extra_params$points_shape
+  } else {
+    # default: open circle for "point", filled circle for "pointdensity"
+    points_shape <- if (point_style == "pointdensity") 16 else 1
+  }
+
   # Base plot + point layer
   p <-
-    ggplot2::ggplot(data, ggplot2::aes(y = {{ truth }}, x = {{ estimate }})) +
+    ggplot2::ggplot(data, aes_mapping) +
     {
       if (point_style == "point") {
         ggplot2::geom_point(
@@ -251,8 +296,8 @@ scatter <- function(
     } +
     ggplot2::geom_abline(intercept = 0, slope = 1, color = "grey50") +
     ggplot2::labs(
-      y = as.character(substitute(truth)),
-      x = as.character(substitute(estimate))
+      x = x_label,
+      y = y_label
     ) +
     ggplot2::coord_fixed(xlim = range_values, ylim = range_values) +
     theme_baseR()
