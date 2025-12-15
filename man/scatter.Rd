@@ -11,6 +11,13 @@ scatter(
   metrics = list(rsq, md, rmd, rmse, rrmse),
   metrics_position = "inside",
   metrics_inside_placement = "upperleft",
+  point_style = c("point", "pointdensity", "auto"),
+  density_scale = c("absolute", "relative"),
+  density_adjust = 1,
+  density_method = c("auto", "kde2d", "neighbors"),
+  density_show_legend = FALSE,
+  density_switch_n = 5000,
+  swap_axes = FALSE,
   ...
 )
 }
@@ -21,39 +28,96 @@ scatter(
 
 \item{estimate}{The column name in `data` containing estimate values. Should be unquoted.}
 
-\item{metrics}{A list of metrics to compute and display. Metrics can include almost any function from the `yardstick` package 
+\item{metrics}{A list of metrics to compute and display. Metrics can include almost any function from the `yardstick` package
 (e.g., `rsq`, `rmse`, `mape`). Defaults to `list(rsq, md, rmd, rmse, rrmse)`. Set to `NULL` to disable.}
 
-\item{metrics_position}{A character string indicating where to display metrics. Options are `"inside"` 
+\item{metrics_position}{A character string indicating where to display metrics. Options are `"inside"`
 (as annotations within the plot) or `"outside"` (as subtitle or facet labels). Defaults to `"inside"`.}
 
-\item{metrics_inside_placement}{A character string indicating the position of the metrics within the plot. 
-Options are "upperright", "upperleft", "lowerright", or "lowerleft". Defaults to "upperright".}
+\item{metrics_inside_placement}{A character string indicating the position of the metrics within the plot.
+Options are `"upperright"`, `"upperleft"`, `"lowerright"`, or `"lowerleft"`. Defaults to `"upperleft"`.}
 
-\item{...}{Additional parameters to control point aesthetics, including:
-- `points_color`: Color of points (default is "black").
-- `points_size`: Size of points (default is 2).
-- `points_shape`: Shape of points (default is 1).
-- `points_alpha`: Transparency of points (default is 1).
-- `text_size`: text size for the displayed metrics (default is 10 pt)
-- `text_background_alpha`: change the transparency of the metrics text background (default is 0.5). Disable with 0 (fully transparent)
-- `metrics_nlines`: allow to split the metrics text into n lines (default is 1 line)}
+\item{point_style}{Character; one of `c("point", "pointdensity", "auto")`.
+- `"point"` uses `geom_point()`.
+- `"pointdensity"` uses `ggpointdensity::geom_pointdensity()`, coloring points by density.
+- `"auto"` automatically switches to `"pointdensity"` when `nrow(data) >= density_switch_n`.}
+
+\item{density_scale}{Character; one of `c("absolute", "relative")`. Controls how colors represent density:
+- `"absolute"` maps color to `after_stat(density)` with a global scale shared across facets, using a mild `"sqrt"` transform.
+  This is suitable when comparing density magnitudes between facets.
+- `"relative"` maps color to `after_stat(ndensity)` (values normalized to [0,1] per facet). This emphasizes local patterns
+  but is not directly comparable across facets.}
+
+\item{density_adjust}{Numeric passed to `geom_pointdensity(adjust=)` (bandwidth multiplier). Ignored if `point_style="point"`.}
+
+\item{density_method}{One of `c("auto", "kde2d", "neighbors")` for `geom_pointdensity(method=)`. Ignored if `point_style="point"`.}
+
+\item{density_show_legend}{Logical; show a colorbar for density. Defaults to `FALSE`. If `TRUE`, the legend label reflects
+the selected `density_scale` (either "Point density" or "Relative density (per facet)"). Ignored if `point_style="point"`.}
+
+\item{density_switch_n}{Integer threshold used when `point_style="auto"` (default 5000).}
+
+\item{swap_axes}{Logical; if `FALSE` (default), `truth` is mapped to the
+x-axis and `estimate` to the y-axis. If `TRUE`, the axes are swapped, with
+`estimate` on the x-axis and `truth` on the y-axis (i.e., the previous
+behavior of the function). This option affects only the visual orientation of the plot
+and does  affect how agreement metrics are calculated — metrics are
+always computed as `metric(truth, estimate)` regardless of axis order.}
+
+\item{...}{Additional parameters to control plot appearance and advanced color options:
+- `points_color`: Color of points (default `"black"`). Ignored for `pointdensity` when density is mapped.
+- `points_size`: Size of points (default `2`).
+- `points_shape`: Shape of points (default `1`).
+- `points_alpha`: Transparency of points (default `1`).
+- `text_size`: Text size (pt) for metrics (default `10`).
+- `text_background_alpha`: Transparency of metrics text background (default `0.5`; `0` disables background).
+- `metrics_nlines`: Split metrics text into multiple lines (default `1` line).
+- `density_palette`: Name of viridis palette to use for density mapping (`"viridis"`, `"magma"`, `"plasma"`, `"inferno"`, `"cividis"`).
+- `density_fixed_color`: Optional single color (e.g., `"darkred"`) to draw all points, disabling density coloring.
+- `density_scale_custom`: A custom ggplot2 scale (e.g., `scale_color_distiller(palette="Reds")`) to override the default viridis scale.}
 }
 \value{
 A ggplot object.
 }
 \description{
-This function creates a scatterplot comparing `truth` and `estimate` values. It supports grouped data, 
-adding facets for each group, and can optionally include agreement metrics as text annotations in the plot. 
+This function creates a scatterplot comparing `truth` (typically observed)
+and `estimate` (typically predicted) values. By default, `truth` is mapped
+to the x-axis and `estimate` to the y-axis, but this can be reversed using
+the `swap_axes` argument. It supports grouped data,
+adding facets for each group, and can optionally include agreement metrics as text annotations in the plot.
 Metrics can be positioned either inside the plot area or outside as subtitles or facet labels.
+The function can automatically switch from simple points (`geom_point()`) to density-colored points
+(`ggpointdensity::geom_pointdensity()`) when large sample sizes are detected, helping to mitigate overplotting.
 }
 \details{
-The function dynamically calculates axis ranges based on the `truth` and `estimate` values, ensuring a square plot using 
-`coord_fixed()`. For grouped data, it uses `facet_wrap` to create separate scatterplots for each group.
+The function dynamically calculates axis ranges based on the `truth` and `estimate` values, ensuring a square plot using
+`coord_fixed()`. For grouped data, it uses `facet_wrap()` to create separate scatterplots for each group.
 
-Agreement metrics are calculated using the `agreement_metrics` function, and their display depends on the value of 
-`metrics_position`. For grouped data with `metrics_position = "outside"`, metrics are added to the facet labels, 
-while for `metrics_position = "inside"`, they are displayed within each plot as annotations.
+When `point_style = "pointdensity"`, points are colored by their local density to reduce overplotting.
+The `density_scale` argument determines whether color is scaled globally (`"absolute"`) or normalized per facet (`"relative"`).
+The color palette can be changed with `density_palette`, replaced with a fixed color using `density_fixed_color`,
+or overridden entirely with a custom ggplot2 scale passed via `density_scale_custom`.
+
+Agreement metrics are calculated using the `agreement_metrics()` function and displayed according to `metrics_position`.
+For grouped data with `metrics_position = "outside"`, metrics are added to the facet labels; with `"inside"`, they are displayed
+as text annotations within each plot.
+
+The choice of placing observed (`truth`) values on the x-axis and predicted
+(`estimate`) values on the y-axis follows recommendations from the statistical
+and ecological modelling literature. Piñeiro et al. (2008) argued that
+regression and agreement diagnostics are most interpretable when the observed
+variable is treated as the y axis. More recently, Pauwels et al.
+(2019) revisited this issue and presented counterarguments supporting the
+opposite convention. The `swap_axes` argument is provided to accommodate both
+perspectives, with the default setting placing the observed values on the x-axis.
+
+Piñeiro, G., Perelman, S., Guerschman, J. P., & Paruelo, J. M. (2008).
+  How to evaluate models: observed vs. predicted or predicted vs. observed?
+  Ecological Modelling, 216(3–4), 316–322.
+
+Pauwels, V. R. N., Chen, Y., & Sadegh, M. (2019).
+  Revisiting the observed–predicted scatterplot debate: is the 1:1 line really the best reference?
+  Ecological Modelling, 407, 108802.
 }
 \examples{
 library(dplyr)
@@ -85,5 +149,52 @@ df \%>\%
 df \%>\%
   group_by(group) \%>\%
   scatter(truth, estimate, metrics = list(rsq, rmse), metrics_position = "outside")
+
+# ---------------------------------------------------------------------
+# Point density coloring & controls
+# ---------------------------------------------------------------------
+
+# 1) Force point-density with ABSOLUTE scale (comparable across facets)
+scatter(df, truth, estimate,
+        point_style = "pointdensity",
+        density_scale = "absolute",
+        density_show_legend = TRUE)
+
+# 2) Force point-density with RELATIVE scale (0–1 per facet); legend off
+df \%>\%
+  group_by(group) \%>\%
+  scatter(truth, estimate,
+          point_style = "pointdensity",
+          density_scale = "relative",
+          density_show_legend = FALSE)
+
+# 3) Change the palette used for density mapping (viridis option)
+scatter(df, truth, estimate,
+        point_style = "pointdensity",
+        density_scale = "absolute",
+        density_show_legend = TRUE,
+        density_palette = "plasma")
+
+
+# 4) Provide a CUSTOM ggplot2 color scale (overrides viridis)
+scatter(df, truth, estimate,
+        point_style = "pointdensity",
+        density_scale = "absolute",
+        density_scale_custom = ggplot2::scale_color_distiller(palette = "Reds"),
+        density_show_legend = TRUE)
+
+# 5) Auto-switch to point-density for larger datasets
+# (uses 'density_switch_n' threshold; here we keep it small for example)
+scatter(df, truth, estimate,
+        point_style = "auto",
+        density_switch_n = 100)  # switches to pointdensity at n >= 100
+
+# 6) Alternative density method & smoothing (neighbors + adjust)
+scatter(df, truth, estimate,
+        point_style = "pointdensity",
+        density_scale = "absolute",
+        density_method = "neighbors",
+        density_adjust = 1.3,
+        density_show_legend = TRUE)
 
 }
