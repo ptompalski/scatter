@@ -21,4 +21,6 @@ Imports:
     magrittr,
     ggpointdensity
 RoxygenNote: 7.3.3
-URL: https://ptompalski.github.io/scatter/
+URL: https://ptompalski.github.io/scatter
+BugReports: https://ptompalski.github.io/scatter/issues
+
