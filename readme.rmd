@@ -32,7 +32,6 @@ Scatterplots are one of the most frequently used visualizations in my daily work
 
 - Ensure the plot is always square.
 - Include a 1:1 reference line.
-- Display "predicted" values on the x-axis.
 - Provide an optional text panel showing agreement statistics, allowing an easy customization of the metrics included.
 - Seamlessly handle grouped data, creating faceted plots with minimal effort.
 
@@ -84,3 +83,10 @@ df %>%
 ```
 
 
+## Axis orientation: observed vs. predicted
+
+By default, `scatter()` places observed (truth) values on the x-axis and predicted (estimate) values on the y-axis. This follows recommendations in the modelling literature, but users can easily switch back to the alternative convention (predicted on x) using `swap_axes = TRUE`.
+
+The most influential position on this topic, published by [Piñeiro et al. (2008)](https://www.sciencedirect.com/science/article/pii/S0304380008002305), argues that observed values should be placed on the x-axis to improve the interpretability of regression diagnostics and model evaluation, based on the idea that predictions are conditioned on observations. However, [Pauwels et al. (2019)](https://www.sciencedirect.com/science/article/pii/S0304380019303102?via%3Dihub) subsequently revisited this argument and pointed out that parts of this reasoning are conceptually flawed, showing that the choice of axis orientation does not have a universally correct solution and can influence interpretation depending on the modelling context and analytical objective.
+
+Importantly, axis orientation in `scatter()` affects only the visualization; agreement metrics are always computed using the original (truth, estimate) pairing.
