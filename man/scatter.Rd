@@ -18,6 +18,7 @@ scatter(
   density_show_legend = FALSE,
   density_switch_n = 5000,
   swap_axes = FALSE,
+  facet_scale = c("fixed", "free"),
   ...
 )
 }
@@ -63,6 +64,8 @@ x-axis and `estimate` to the y-axis. If `TRUE`, the axes are swapped, with
 behavior of the function). This option affects only the visual orientation of the plot
 and does  affect how agreement metrics are calculated — metrics are
 always computed as `metric(truth, estimate)` regardless of axis order.}
+
+\item{facet_scale}{Default `fixed`}
 
 \item{...}{Additional parameters to control plot appearance and advanced color options:
 - `points_color`: Color of points (default `"black"`). Ignored for `pointdensity` when density is mapped.
