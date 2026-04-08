@@ -1,5 +1,15 @@
 # Changelog
 
+## scatter 0.1.13 (2026-04-08)
+
+- Added `plot_range` to zoom the visible square plotting window without
+  changing full-data agreement metrics, and to keep inside-plot metric
+  annotations anchored within the visible panel.
+- Moved secondary tuning and layout controls such as `plot_range`,
+  density controls, and `facet_scale` into `...`, leaving the main
+  function signature focused on core behavior.
+- Added a `testthat` test suite with full package coverage.
+
 ## scatter 0.1.12
 
 - Axis orientation — truth (observed) is now placed on the x-axis by

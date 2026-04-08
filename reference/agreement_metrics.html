@@ -13,7 +13,7 @@ package to compute a variety of metrics, which can be specified through the
 
     <a class="navbar-brand me-2" href="../index.html">scatter</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@ package to compute a variety of metrics, which can be specified through the
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">truth</span>,</span>
 <span>  <span class="va">estimate</span>,</span>
-<span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rsq</span>, <span class="va">md</span>, <span class="va">rmd</span>, <span class="va">rmse</span>, <span class="va">rrmse</span><span class="op">)</span>,</span>
+<span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu">yardstick</span><span class="fu">::</span><span class="va"><a href="https://yardstick.tidymodels.org/reference/rsq.html" class="external-link">rsq</a></span>, <span class="va">md</span>, <span class="va">rmd</span>, <span class="fu">yardstick</span><span class="fu">::</span><span class="va"><a href="https://yardstick.tidymodels.org/reference/rmse.html" class="external-link">rmse</a></span>, <span class="va">rrmse</span><span class="op">)</span>,</span>
 <span>  label <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -65,17 +65,18 @@ package to compute a variety of metrics, which can be specified through the
 
 
 <dt id="arg-truth">truth<a class="anchor" aria-label="anchor" href="#arg-truth"></a></dt>
-<dd><p>The column in `data` representing the true values. Use tidy evaluation (e.g., ``).</p></dd>
+<dd><p>The column in `data` representing the true values. Use a bare column name.</p></dd>
 
 
 <dt id="arg-estimate">estimate<a class="anchor" aria-label="anchor" href="#arg-estimate"></a></dt>
-<dd><p>The column in `data` representing the predicted values. Use tidy evaluation (e.g., ``).</p></dd>
+<dd><p>The column in `data` representing the predicted values. Use a bare column name.</p></dd>
 
 
 <dt id="arg-metrics">metrics<a class="anchor" aria-label="anchor" href="#arg-metrics"></a></dt>
 <dd><p>A list of metrics to compute. Metrics can be almost any function from the `yardstick`
-package (e.g., `rsq`, `rmse`, `mape`, `msd`), provided they follow the `yardstick` format. Defaults to
-`list(rsq, md, rmd, rmse, rrmse)`. Can also be a named list of metrics to compute (e.g. `list(bias=md, "bias<!-- %"=rmd)`. -->
+package (e.g., `rsq`, `rmse`, `mape`, `msd`), provided they
+follow the `yardstick` format. Defaults to `list(rsq, md, rmd, rmse, rrmse)`.
+Can also be a named list of metrics to compute (e.g. `list(bias = md, "bias<!-- %" = rmd)`). -->
 Names are then used instead of the `yardstick` metric names.</p></dd>
 
 

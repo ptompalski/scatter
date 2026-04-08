@@ -12,7 +12,7 @@ agreement_metrics(
   data,
   truth,
   estimate,
-  metrics = list(rsq, md, rmd, rmse, rrmse),
+  metrics = list(yardstick::rsq, md, rmd, yardstick::rmse, rrmse),
   label = FALSE
 )
 ```
@@ -26,13 +26,13 @@ agreement_metrics(
 
 - truth:
 
-  The column in \`data\` representing the true values. Use tidy
-  evaluation (e.g., \`\`).
+  The column in \`data\` representing the true values. Use a bare column
+  name.
 
 - estimate:
 
-  The column in \`data\` representing the predicted values. Use tidy
-  evaluation (e.g., \`\`).
+  The column in \`data\` representing the predicted values. Use a bare
+  column name.
 
 - metrics:
 
@@ -40,7 +40,7 @@ agreement_metrics(
   the \`yardstick\` package (e.g., \`rsq\`, \`rmse\`, \`mape\`,
   \`msd\`), provided they follow the \`yardstick\` format. Defaults to
   \`list(rsq, md, rmd, rmse, rrmse)\`. Can also be a named list of
-  metrics to compute (e.g. \`list(bias=md, "bias Names are then used
+  metrics to compute (e.g. \`list(bias = md, "bias Names are then used
   instead of the \`yardstick\` metric names.
 
 - label:

@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">scatter</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +48,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="scatter">{scatter}<a class="anchor" aria-label="anchor" href="#scatter"></a>
 </h1></div>
+<p><a href="https://github.com/ptompalski/scatter/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/ptompalski/scatter/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></p>
 <p>This package provides functions for quickly calculating measures of model prediction accuracy and creating enhanced scatterplots. The scatterplots can include text summarizing the agreement metrics (e.g., R², RMSE, MAPE) between two plotted variables, with support for grouped data and faceting. Agreement metrics are sourced from the <a href="https://yardstick.tidymodels.org/index.html" class="external-link">{yardstick}</a> package and can be further customized by the user.</p>
 </div>
 <div class="section level1">
@@ -72,10 +73,12 @@
 <div class="section level1">
 <h1 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h1>
-<p>Simple scatterplot with default set of agreement metrics:</p>
+<p>Simple scatterplot with the default set of named agreement metrics:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ptompalski.github.io/scatter">scatter</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/yardstick" class="external-link">yardstick</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># some fake data</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> </span>
@@ -88,35 +91,26 @@
 <span></span>
 <span><span class="fu"><a href="reference/scatter.html">scatter</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">truth</span>, <span class="va">estimate</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/unnamed-chunk-3-1.png"><!-- --></p>
-<p>Metric names can be easily modified:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mymetrics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">"R²"</span> <span class="op">=</span> <span class="va">rsq</span>,</span>
-<span>  <span class="st">"bias"</span> <span class="op">=</span> <span class="va">md</span>,</span>
-<span>  <span class="st">"bias%"</span> <span class="op">=</span> <span class="va">rmd</span>,</span>
-<span>  <span class="st">"RMSE"</span> <span class="op">=</span> <span class="va">rmse</span>,</span>
-<span>  <span class="st">"RMSE%"</span> <span class="op">=</span> <span class="va">rrmse</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/scatter.html">scatter</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">truth</span>, <span class="va">estimate</span>, metrics<span class="op">=</span><span class="va">mymetrics</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-4-1.png"><!-- --></p>
 <p>Scatterplot for grouped data with agreement metrics:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>This example uses a named list so the annotation labels are explicit:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="reference/scatter.html">scatter</a></span><span class="op">(</span><span class="va">truth</span>, <span class="va">estimate</span>, metrics<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R²"</span><span class="op">=</span><span class="va">rsq</span>,<span class="va">rmse</span>,<span class="va">mape</span>,<span class="va">msd</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-5-1.png"><!-- --></p>
+<p><img src="reference/figures/unnamed-chunk-4-1.png"><!-- --></p>
 <p>Scatterplot for grouped data with agreement metrics positioned outside the plots:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>The same approach works when positioning metrics outside the panels:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="reference/scatter.html">scatter</a></span><span class="op">(</span><span class="va">truth</span>, <span class="va">estimate</span>, metrics<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rsq</span>,<span class="va">rmse</span><span class="op">)</span>, metrics_position <span class="op">=</span> <span class="st">"outside"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-6-1.png"><!-- --></p>
+<p><img src="reference/figures/unnamed-chunk-5-1.png"><!-- --></p>
 <div class="section level2">
 <h2 id="scatterplots-with-large-datasets">Scatterplots with large datasets<a class="anchor" aria-label="anchor" href="#scatterplots-with-large-datasets"></a>
 </h2>
 <p>When working with large datasets, heavy overplotting can obscure the underlying data distribution and make it difficult to identify systematic patterns, biases, or outliers. To address this, <code><a href="reference/scatter.html">scatter()</a></code> supports density-colored points (<code><a href="https://rdrr.io/pkg/ggpointdensity/man/geom_pointdensity.html" class="external-link">ggpointdensity::geom_pointdensity()</a></code>). This approach colors points by their local density, revealing the structure of dense regions while still retaining individual observations.</p>
 <p>The example below compares a standard scatterplot with a density-colored version for the same large dataset.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
@@ -139,7 +133,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Density-colored scatterplot"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-7-1.png"><!-- --></p>
+<p><img src="reference/figures/unnamed-chunk-6-1.png"><!-- --></p>
 <p>For convenience, <code><a href="reference/scatter.html">scatter()</a></code> can also switch to this behavior automatically using <code>point_style = "auto"</code> (default), which enables density coloring once the number of observations exceeds a configurable threshold.</p>
 </div>
 <div class="section level2">
@@ -148,9 +142,9 @@
 <p>By default, <code><a href="reference/scatter.html">scatter()</a></code> places observed (truth) values on the x-axis and predicted (estimate) values on the y-axis. This follows recommendations in the modelling literature, but users can easily switch back to the alternative convention (predicted on x) using <code>swap_axes = TRUE</code>.</p>
 <p>The most influential position on this topic, published by <a href="https://www.sciencedirect.com/science/article/pii/S0304380008002305" class="external-link">Piñeiro et al. (2008)</a>, argues that observed values should be placed on the x-axis to improve the interpretability of regression diagnostics and model evaluation, based on the idea that predictions are conditioned on observations. However, <a href="https://www.sciencedirect.com/science/article/pii/S0304380019303102?via%3Dihub" class="external-link">Pauwels et al. (2019)</a> subsequently revisited this argument and pointed out that parts of this reasoning are conceptually flawed, showing that the choice of axis orientation does not have a universally correct solution and can influence interpretation depending on the modelling context and analytical objective.</p>
 <p>Importantly, axis orientation in <code><a href="reference/scatter.html">scatter()</a></code> affects only the visualization; agreement metrics are always computed using the original (truth, estimate) pairing (compare the figure below with the top-most scatterplot):</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/scatter.html">scatter</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">truth</span>, <span class="va">estimate</span>, swap_axes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-8-1.png"><!-- --></p>
+<p><img src="reference/figures/unnamed-chunk-7-1.png"><!-- --></p>
 </div>
 </div>
 

@@ -21,6 +21,33 @@ rmd(data, truth, estimate, na_rm = TRUE, case_weights = NULL, ...)
 rmd_vec(truth, estimate, na_rm = TRUE, case_weights = NULL, ...)
 ```
 
+## Arguments
+
+- data:
+
+  A data frame containing the \`truth\` and \`estimate\` columns.
+
+- ...:
+
+  Additional arguments passed to lower-level functions.
+
+- truth:
+
+  The column identifier for the true values (bare or quoted).
+
+- estimate:
+
+  The column identifier for the predicted values (bare or quoted).
+
+- na_rm:
+
+  A logical value indicating whether \`NA\` values should be removed
+  before computation.
+
+- case_weights:
+
+  An optional column of case weights.
+
 ## Details
 
 The relative mean difference is useful when comparing average deviations
