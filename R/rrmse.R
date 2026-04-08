@@ -54,10 +54,10 @@ rrmse.data.frame <- function(data,
     name = "rrmse",
     fn = metric_fn,
     data = data,
-    truth = !!enquo(truth),
-    estimate = !!enquo(estimate),
+    truth = !!rlang::enquo(truth),
+    estimate = !!rlang::enquo(estimate),
     na_rm = na_rm,
-    case_weights = !!enquo(case_weights)
+    case_weights = !!rlang::enquo(case_weights)
   )
 }
 
@@ -86,7 +86,7 @@ rrmse_vec <- function(truth,
 
 rrmse_impl <- function(truth, estimate, case_weights, normalization = "mean") {
   errors <- (truth - estimate)^2
-  rmse_value <- sqrt(yardstick:::yardstick_mean(errors, case_weights = case_weights))
+  rmse_value <- sqrt(if (is.null(case_weights)) mean(errors) else stats::weighted.mean(errors, case_weights))
   
   denom <- switch(
     normalization,

@@ -5,3 +5,6 @@
 ^docs$
 ^pkgdown$
 temp
+^Clipboard01\.png$
+^README\.html$
+^readme\.rmd$

@@ -15,6 +15,13 @@
 #' size of the true value. It supports optional case weights and handles missing
 #' values similarly to other `yardstick` metrics.
 #'
+#' @param data A data frame containing the `truth` and `estimate` columns.
+#' @param truth The column identifier for the true values (bare or quoted).
+#' @param estimate The column identifier for the predicted values (bare or quoted).
+#' @param na_rm A logical value indicating whether `NA` values should be removed before computation.
+#' @param case_weights An optional column of case weights.
+#' @param ... Additional arguments passed to lower-level functions.
+#'
 #' @export
 rmd <- function(data, ...) {
   UseMethod("rmd")
@@ -37,10 +44,10 @@ rmd.data.frame <- function(data,
     name = "rmd",
     fn = rmd_vec,
     data = data,
-    truth = !!enquo(truth),
-    estimate = !!enquo(estimate),
+    truth = !!rlang::enquo(truth),
+    estimate = !!rlang::enquo(estimate),
     na_rm = na_rm,
-    case_weights = !!enquo(case_weights)
+    case_weights = !!rlang::enquo(case_weights)
   )
 }
 
@@ -72,8 +79,12 @@ rmd_vec <- function(truth,
 
 rmd_impl <- function(truth, estimate, case_weights) {
   
-  mean_difference <- yardstick:::yardstick_mean(estimate-truth, case_weights = case_weights)
-  mean_truth <- yardstick:::yardstick_mean(truth, case_weights = case_weights)
+  weighted_mean <- function(x, w) {
+    if (is.null(w)) mean(x) else stats::weighted.mean(x, w)
+  }
+
+  mean_difference <- weighted_mean(estimate - truth, case_weights)
+  mean_truth <- weighted_mean(truth, case_weights)
   
   out <- mean_difference / mean_truth * 100
   

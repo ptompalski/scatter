@@ -44,10 +44,10 @@ md.data.frame <- function(data,
     name = "md",
     fn = md_vec,
     data = data,
-    truth = !!enquo(truth),
-    estimate = !!enquo(estimate),
+    truth = !!rlang::enquo(truth),
+    estimate = !!rlang::enquo(estimate),
     na_rm = na_rm,
-    case_weights = !!enquo(case_weights)
+    case_weights = !!rlang::enquo(case_weights)
   )
 }
 

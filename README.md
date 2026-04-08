@@ -3,6 +3,8 @@
 
 # {scatter}
 
+[![R-CMD-check](https://github.com/ptompalski/scatter/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ptompalski/scatter/actions/workflows/R-CMD-check.yaml)
+
 This package provides functions for quickly calculating measures of
 model prediction accuracy and creating enhanced scatterplots. The
 scatterplots can include text summarizing the agreement metrics (e.g.,
@@ -34,11 +36,13 @@ library(scatter)
 
 # Examples
 
-Simple scatterplot with default set of agreement metrics:
+Simple scatterplot with the default set of named agreement metrics:
 
 ``` r
 library(dplyr)
 library(scatter)
+library(yardstick)
+library(ggplot2)
 
 # some fake data
 df <- 
@@ -54,22 +58,9 @@ scatter(df, truth, estimate)
 
 ![](man/figures/unnamed-chunk-3-1.png)<!-- -->
 
-Metric names can be easily modified:
-
-``` r
-mymetrics <- list(
-  "R²" = rsq,
-  "bias" = md,
-  "bias%" = rmd,
-  "RMSE" = rmse,
-  "RMSE%" = rrmse
-)
-scatter(df, truth, estimate, metrics=mymetrics)
-```
-
-![](man/figures/unnamed-chunk-4-1.png)<!-- -->
-
 Scatterplot for grouped data with agreement metrics:
+
+This example uses a named list so the annotation labels are explicit:
 
 ``` r
 df %>%
@@ -77,10 +68,12 @@ df %>%
   scatter(truth, estimate, metrics=list("R²"=rsq,rmse,mape,msd))
 ```
 
-![](man/figures/unnamed-chunk-5-1.png)<!-- -->
+![](man/figures/unnamed-chunk-4-1.png)<!-- -->
 
 Scatterplot for grouped data with agreement metrics positioned outside
 the plots:
+
+The same approach works when positioning metrics outside the panels:
 
 ``` r
 df %>%
@@ -88,7 +81,7 @@ df %>%
   scatter(truth, estimate, metrics=list(rsq,rmse), metrics_position = "outside")
 ```
 
-![](man/figures/unnamed-chunk-6-1.png)<!-- -->
+![](man/figures/unnamed-chunk-5-1.png)<!-- -->
 
 ## Scatterplots with large datasets
 
@@ -128,7 +121,7 @@ p2 <- scatter(
 p1 + p2
 ```
 
-![](man/figures/unnamed-chunk-7-1.png)<!-- -->
+![](man/figures/unnamed-chunk-6-1.png)<!-- -->
 
 For convenience, `scatter()` can also switch to this behavior
 automatically using `point_style = "auto"` (default), which enables
@@ -164,4 +157,4 @@ scatterplot):
 scatter(df, truth, estimate, swap_axes = TRUE)
 ```
 
-![](man/figures/unnamed-chunk-8-1.png)<!-- -->
+![](man/figures/unnamed-chunk-7-1.png)<!-- -->

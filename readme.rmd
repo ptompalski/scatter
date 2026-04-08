@@ -17,12 +17,14 @@ knitr::opts_chunk$set(
   fig.width = 7,
   fig.height = 5,
   comment = "#>",
-  dev = "png",
-  dpi = 300
+  dev = "ragg_png",
+  dpi = 400
 )
 ```
   
 # {scatter}
+
+[![R-CMD-check](https://github.com/ptompalski/scatter/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ptompalski/scatter/actions/workflows/R-CMD-check.yaml)
   
 This package provides functions for quickly calculating measures of model prediction accuracy and creating enhanced scatterplots. The scatterplots can include text summarizing the agreement metrics (e.g., R², RMSE, MAPE) between two plotted variables, with support for grouped data and faceting. Agreement metrics are sourced from the [{yardstick}](https://yardstick.tidymodels.org/index.html) package and can be further customized by the user.
 
@@ -47,11 +49,13 @@ library(scatter)
 
 # Examples
 
-Simple scatterplot with default set of agreement metrics:
+Simple scatterplot with the default set of named agreement metrics:
 
 ```{r, warning=FALSE, message=FALSE, fig.height=3.5}
 library(dplyr)
 library(scatter)
+library(yardstick)
+library(ggplot2)
 
 # some fake data
 df <- 
@@ -65,20 +69,10 @@ tibble(
 scatter(df, truth, estimate)
 ```
 
-Metric names can be easily modified:
-```{r, warning=FALSE, message=FALSE, fig.height=3.5}
-mymetrics <- list(
-  "R²" = rsq,
-  "bias" = md,
-  "bias%" = rmd,
-  "RMSE" = rmse,
-  "RMSE%" = rrmse
-)
-scatter(df, truth, estimate, metrics=mymetrics)
-
-```
 
 Scatterplot for grouped data with agreement metrics:
+
+This example uses a named list so the annotation labels are explicit:
 ```{r, warning=FALSE, message=FALSE, fig.height=3.5}
 df %>%
   group_by(group) %>%
@@ -88,6 +82,8 @@ df %>%
 
 
 Scatterplot for grouped data with agreement metrics positioned outside the plots:
+
+The same approach works when positioning metrics outside the panels:
 ```{r, warning=FALSE, message=FALSE, fig.height=3.5}
 df %>%
   group_by(group) %>%
