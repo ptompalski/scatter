@@ -21,23 +21,23 @@
 #'
 #' @export
 theme_baseR <- function(font_size = 10, font_family = "sans") {
-  theme(
-    panel.background = element_rect(fill = "white", color = NA),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.border = element_rect(color = "black", fill = NA),
-    axis.line = element_blank(),
-    axis.ticks = element_line(color = "black"),
-    axis.text = element_text(color = "black", size = font_size * 0.9, family = font_family),
-    axis.title = element_text(color = "black", size = font_size, family = font_family),
-    plot.background = element_rect(fill = "white", color = NA),
-    plot.title = element_text(hjust = 0.5, face = "bold", size = font_size * 1.2, family = font_family),
-    legend.background = element_rect(fill = "white", color = NA),
-    legend.key = element_rect(fill = "white", color = NA),
-    legend.text = element_text(size = font_size * 0.8, family = font_family),
-    legend.title = element_text(size = font_size * 0.9, family = font_family),
-    strip.background = element_blank(),
-    strip.text = element_text(size = font_size, family = font_family)
+  ggplot2::theme(
+    panel.background = ggplot2::element_rect(fill = "white", color = NA),
+    panel.grid.major = ggplot2::element_blank(),
+    panel.grid.minor = ggplot2::element_blank(),
+    panel.border = ggplot2::element_rect(color = "black", fill = NA),
+    axis.line = ggplot2::element_blank(),
+    axis.ticks = ggplot2::element_line(color = "black"),
+    axis.text = ggplot2::element_text(color = "black", size = font_size * 0.9, family = font_family),
+    axis.title = ggplot2::element_text(color = "black", size = font_size, family = font_family),
+    plot.background = ggplot2::element_rect(fill = "white", color = NA),
+    plot.title = ggplot2::element_text(hjust = 0.5, face = "bold", size = font_size * 1.2, family = font_family),
+    legend.background = ggplot2::element_rect(fill = "white", color = NA),
+    legend.key = ggplot2::element_rect(fill = "white", color = NA),
+    legend.text = ggplot2::element_text(size = font_size * 0.8, family = font_family),
+    legend.title = ggplot2::element_text(size = font_size * 0.9, family = font_family),
+    strip.background = ggplot2::element_blank(),
+    strip.text = ggplot2::element_text(size = font_size, family = font_family)
     
   )
 }

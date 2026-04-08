@@ -3,6 +3,8 @@
 
 # {scatter}
 
+[![R-CMD-check](https://github.com/ptompalski/scatter/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ptompalski/scatter/actions/workflows/R-CMD-check.yaml)
+
 This package provides functions for quickly calculating measures of
 model prediction accuracy and creating enhanced scatterplots. The
 scatterplots can include text summarizing the agreement metrics (e.g.,

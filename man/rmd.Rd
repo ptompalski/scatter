@@ -12,6 +12,19 @@ rmd(data, ...)
 
 rmd_vec(truth, estimate, na_rm = TRUE, case_weights = NULL, ...)
 }
+\arguments{
+\item{data}{A data frame containing the `truth` and `estimate` columns.}
+
+\item{...}{Additional arguments passed to lower-level functions.}
+
+\item{truth}{The column identifier for the true values (bare or quoted).}
+
+\item{estimate}{The column identifier for the predicted values (bare or quoted).}
+
+\item{na_rm}{A logical value indicating whether `NA` values should be removed before computation.}
+
+\item{case_weights}{An optional column of case weights.}
+}
 \description{
 Computes the relative mean signed deviation between `estimate` and `truth`,
 calculated as the mean of (`estimate - truth`) divided by the mean of `truth`,

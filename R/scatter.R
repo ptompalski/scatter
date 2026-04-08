@@ -14,8 +14,8 @@
 #' @param estimate The column name in \code{data} containing estimate values. Should be unquoted.
 #' @param metrics A list of metrics to compute and display. Metrics can include almost any function from the \pkg{yardstick} package
 #'   (e.g., \code{rsq}, \code{rmse}, \code{mape}). This can be either an unnamed list of functions or a named list such as
-#'   \code{list("R^2" = rsq, "bias\%" = rmd)}, in which case the provided names are used in the labels. Defaults to
-#'   \code{list("R²" = rsq, "bias" = md, "bias\%" = rmd, "RMSE" = rmse, "RMSE\%" = rrmse)}. Set to \code{NULL} to disable.
+#'   \code{list("R\u00B2" = rsq, "bias\%" = rmd)}, in which case the provided names are used in the labels. Defaults to
+#'   \code{list("R\u00B2" = rsq, "bias" = md, "bias\%" = rmd, "RMSE" = rmse, "RMSE\%" = rrmse)}. Set to \code{NULL} to disable.
 #' @param metrics_position A character string indicating where to display metrics. Options are \code{"inside"}
 #'   (as annotations within the plot) or \code{"outside"} (as subtitle or facet labels). Defaults to \code{"inside"}.
 #' @param metrics_inside_placement A character string indicating the position of the metrics within the plot.
@@ -33,7 +33,7 @@
 #'   x-axis and \code{estimate} to the y-axis. If \code{TRUE}, the axes are swapped, with
 #'   \code{estimate} on the x-axis and \code{truth} on the y-axis (i.e., the previous
 #'   behavior of the function). This option affects only the visual orientation of the plot
-#'   and does  affect how agreement metrics are calculated — metrics are
+#'   and does not affect how agreement metrics are calculated - metrics are
 #'   always computed as \code{metric(truth, estimate)} regardless of axis order.
 #' @param ... Additional parameters controlling plot appearance and advanced color options:
 #' \describe{
@@ -70,19 +70,19 @@
 #' as text annotations within each plot.
 #' The choice of placing observed (\code{truth}) values on the x-axis and predicted
 #' (\code{estimate}) values on the y-axis follows recommendations from the statistical
-#' and ecological modelling literature. Piñeiro et al. (2008) argued that
+#' and ecological modelling literature. Pineiro et al. (2008) argued that
 #' regression and agreement diagnostics are most interpretable when the observed
 #' variable is treated as the y axis. More recently, Pauwels et al.
 #' (2019) revisited this issue and presented counterarguments supporting the
 #' opposite convention. The \code{swap_axes} argument is provided to accommodate both
 #' perspectives, with the default setting placing the observed values on the x-axis.
 #'
-#' Piñeiro, G., Perelman, S., Guerschman, J. P., & Paruelo, J. M. (2008).
+#' Pineiro, G., Perelman, S., Guerschman, J. P., & Paruelo, J. M. (2008).
 #'   How to evaluate models: observed vs. predicted or predicted vs. observed?
-#'   Ecological Modelling, 216(3–4), 316–322.
+#'   Ecological Modelling, 216(3-4), 316-322.
 #'
 #' Pauwels, V. R. N., Chen, Y., & Sadegh, M. (2019).
-#'   Revisiting the observed–predicted scatterplot debate: is the 1:1 line really the best reference?
+#'   Revisiting the observed-predicted scatterplot debate: is the 1:1 line really the best reference?
 #'   Ecological Modelling, 407, 108802.
 #'
 #' @return A ggplot object.
@@ -90,12 +90,12 @@
 #' @examples
 #' library(dplyr)
 #' library(ggplot2)
+#' library(yardstick)
 #'
-#' # Example data
 #' set.seed(123)
 #' df <-
 #'   tibble(
-#'     truth = c(rnorm(150, 10, 2)),
+#'     truth = rnorm(150, 10, 2),
 #'     estimate = truth + rnorm(150, 0, 1),
 #'     group = rep(c("A", "B", "C"), each = 50),
 #'     group2 = rep(c("D1", "D2"), each = 75)
@@ -104,83 +104,113 @@
 #' # Simple scatterplot
 #' scatter(df, truth, estimate)
 #'
-#' # Scatterplot with agreement metrics (inside plot)
-#' scatter(df, truth, estimate, metrics = list("R²" = rsq, mape = mape))
+#' # Scatterplot with agreement metrics inside the plot
+#' scatter(
+#'   df,
+#'   truth,
+#'   estimate,
+#'   metrics = list("R\u00B2" = rsq, mape = mape)
+#' )
 #'
-#' # Scatterplot with agreement metrics (outside plot as subtitle)
-#' scatter(df, truth, estimate, metrics = list("R²" = rsq, RMSE = rmse), metrics_position = "outside")
-#'
-#' # Grouped scatterplot with agreement metrics inside
-#' df %>%
-#'   group_by(group) %>%
-#'   scatter(truth, estimate, metrics = list("R²" = rsq, RMSE = rmse, "RMSE%" = rrmse), metrics_position = "inside")
-#'
-#' # Grouped scatterplot with agreement metrics outside as facet labels
-#' df %>%
-#'   group_by(group) %>%
-#'   scatter(truth, estimate, metrics = list("R²" = rsq, RMSE = rmse), metrics_position = "outside")
-#'
-#' # ---------------------------------------------------------------------
-#' # Point density coloring & controls
-#' # ---------------------------------------------------------------------
-#'
-#' # Zoom the visible plotting range without changing the agreement metrics
+#' # Limit the visible plotting range while keeping full-data metrics
 #' scatter(df, truth, estimate, plot_range = c(6, 12))
 #'
+#' # Show metrics outside the plot
+#' scatter(
+#'   df,
+#'   truth,
+#'   estimate,
+#'   metrics = list("R\u00B2" = rsq, RMSE = rmse),
+#'   metrics_position = "outside"
+#' )
 #'
-#' # Force point-density with ABSOLUTE scale (comparable across facets)
-#' scatter(df, truth, estimate,
-#'         point_style = "pointdensity",
-#'         density_scale = "absolute",
-#'         density_show_legend = TRUE)
-#'
-#' # Force point-density with RELATIVE scale (0–1 per facet); legend off
+#' # Grouped scatterplot with metrics inside each facet
 #' df %>%
 #'   group_by(group) %>%
-#'   scatter(truth, estimate,
-#'           point_style = "pointdensity",
-#'           density_scale = "relative",
-#'           density_show_legend = FALSE)
+#'   scatter(
+#'     truth,
+#'     estimate,
+#'     metrics = list(
+#'       "R\u00B2" = rsq,
+#'       RMSE = rmse,
+#'       "RMSE%" = rrmse
+#'     ),
+#'     metrics_position = "inside"
+#'   )
 #'
-#' # Change the palette used for density mapping (viridis option)
-#' scatter(df, truth, estimate,
-#'         point_style = "pointdensity",
-#'         density_scale = "absolute",
-#'         density_show_legend = TRUE,
-#'         density_palette = "plasma")
+#' # Grouped scatterplot with metrics outside each facet
+#' df %>%
+#'   group_by(group) %>%
+#'   scatter(
+#'     truth,
+#'     estimate,
+#'     metrics = list("R\u00B2" = rsq, RMSE = rmse),
+#'     metrics_position = "outside"
+#'   )
 #'
+#' # Force point-density with relative scale (0-1 per facet)
+#' df %>%
+#'   group_by(group) %>%
+#'   scatter(
+#'     truth,
+#'     estimate,
+#'     point_style = "pointdensity",
+#'     density_scale = "relative",
+#'     density_show_legend = FALSE
+#'   )
 #'
-#' # Provide a CUSTOM ggplot2 color scale (overrides viridis)
-#' scatter(df, truth, estimate,
-#'         point_style = "pointdensity",
-#'         density_scale = "absolute",
-#'         density_scale_custom = ggplot2::scale_color_distiller(palette = "Reds"),
-#'         density_show_legend = TRUE)
+#' # Change the palette used for density mapping
+#' scatter(
+#'   df,
+#'   truth,
+#'   estimate,
+#'   point_style = "pointdensity",
+#'   density_scale = "absolute",
+#'   density_show_legend = TRUE,
+#'   density_palette = "plasma"
+#' )
+#'
+#' # Provide a custom ggplot2 color scale
+#' scatter(
+#'   df,
+#'   truth,
+#'   estimate,
+#'   point_style = "pointdensity",
+#'   density_scale = "absolute",
+#'   density_scale_custom = ggplot2::scale_color_distiller(palette = "Reds"),
+#'   density_show_legend = TRUE
+#' )
 #'
 #' # Auto-switch to point-density for larger datasets
-#' # (uses 'density_switch_n' threshold; here we keep it small for example)
-#' scatter(df, truth, estimate,
-#'         point_style = "auto",
-#'         density_switch_n = 100)  # switches to pointdensity at n >= 100
+#' scatter(
+#'   df,
+#'   truth,
+#'   estimate,
+#'   point_style = "auto",
+#'   density_switch_n = 100
+#' )
 #'
-#' # Alternative density method & smoothing (neighbors + adjust)
-#' scatter(df, truth, estimate,
-#'         point_style = "pointdensity",
-#'         density_scale = "absolute",
-#'         density_method = "neighbors",
-#'         density_adjust = 1.3,
-#'         density_show_legend = TRUE)
-#'
+#' # Alternative density method and smoothing
+#' scatter(
+#'   df,
+#'   truth,
+#'   estimate,
+#'   point_style = "pointdensity",
+#'   density_scale = "absolute",
+#'   density_method = "neighbors",
+#'   density_adjust = 1.3,
+#'   density_show_legend = TRUE
+#' )
 #' @export
 scatter <- function(
   data,
   truth,
   estimate,
   metrics = list(
-    "R²" = rsq,
+    "R\u00B2" = yardstick::rsq,
     "bias" = md,
     "bias%" = rmd,
-    "RMSE" = rmse,
+    "RMSE" = yardstick::rmse,
     "RMSE%" = rrmse
   ),
   metrics_position = "inside",
@@ -439,11 +469,14 @@ scatter <- function(
     if (metrics_position == "inside") {
       metrics_text <- stringr::str_replace_all(metrics_text, "; ", "<br>")
       p <- p +
-        ggplot2::annotate(
-          geom = "richtext",
-          x = ann_x_global,
-          y = ann_y_global,
-          label = metrics_text,
+        ggtext::geom_richtext(
+          data = data.frame(
+            ann_x = ann_x_global,
+            ann_y = ann_y_global,
+            label = metrics_text
+          ),
+          mapping = ggplot2::aes(x = .data$ann_x, y = .data$ann_y, label = .data$label),
+          inherit.aes = FALSE,
           size = text_size / 2.845276,
           hjust = hv$hjust,
           vjust = hv$vjust,
@@ -643,6 +676,7 @@ scatter <- function(
 
         # safer group_label creation (no !!! inside paste())
         data2 <- data %>%
+          dplyr::ungroup() %>%
           dplyr::mutate(
             group_label = purrr::pmap_chr(
               dplyr::across(dplyr::all_of(facet_cols)),
@@ -700,8 +734,10 @@ scatter <- function(
             if (facet_scale == "fixed") {
               ggplot2::coord_fixed(xlim = visible_range, ylim = visible_range)
             } else {
-              ggplot2::coord_cartesian(xlim = plot_range, ylim = plot_range) +
+              list(
+                ggplot2::coord_cartesian(xlim = plot_range, ylim = plot_range),
                 ggplot2::theme(aspect.ratio = 1)
+              )
             }
           } +
           {
@@ -753,3 +789,5 @@ scatter <- function(
 
   p
 }
+
+
