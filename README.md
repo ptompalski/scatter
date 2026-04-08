@@ -41,6 +41,8 @@ Simple scatterplot with the default set of named agreement metrics:
 ``` r
 library(dplyr)
 library(scatter)
+library(yardstick)
+library(ggplot2)
 
 # some fake data
 df <- 
