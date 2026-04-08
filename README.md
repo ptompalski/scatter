@@ -34,7 +34,7 @@ library(scatter)
 
 # Examples
 
-Simple scatterplot with default set of agreement metrics:
+Simple scatterplot with the default set of named agreement metrics:
 
 ``` r
 library(dplyr)
@@ -54,7 +54,8 @@ scatter(df, truth, estimate)
 
 ![](man/figures/unnamed-chunk-3-1.png)<!-- -->
 
-Metric names can be easily modified:
+The `metrics` argument can be supplied as a named list, which controls
+the labels shown in the annotation:
 
 ``` r
 mymetrics <- list(
@@ -71,6 +72,8 @@ scatter(df, truth, estimate, metrics=mymetrics)
 
 Scatterplot for grouped data with agreement metrics:
 
+This example uses a named list so the annotation labels are explicit:
+
 ``` r
 df %>%
   group_by(group) %>%
@@ -81,6 +84,8 @@ df %>%
 
 Scatterplot for grouped data with agreement metrics positioned outside
 the plots:
+
+The same approach works when positioning metrics outside the panels:
 
 ``` r
 df %>%

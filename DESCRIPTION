@@ -1,6 +1,6 @@
 Package: scatter
 Title: Scatterplots with descriptive statistics
-Version: 0.1.12
+Version: 0.1.13
 Authors@R: person("Piotr", "Tompalski", email = "piotr.tompalski@gmail.com", role = c("aut", "cre"))
 Description: This package provides tools for creating scatterplots to compare observed and predicted values, with optional agreement metrics displayed as annotations. 
     The plots support grouped data and faceting.
@@ -23,4 +23,3 @@ Imports:
 RoxygenNote: 7.3.3
 URL: https://ptompalski.github.io/scatter
 BugReports: https://ptompalski.github.io/scatter/issues
-
