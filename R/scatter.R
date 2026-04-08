@@ -93,11 +93,13 @@
 #'
 #' # Example data
 #' set.seed(123)
-#' df <- data.frame(
-#'   group = rep(c("A", "B", "C"), each = 50),
-#'   truth = c(rnorm(50, 10, 2), rnorm(50, 20, 3), rnorm(50, 15, 4)),
-#'   estimate = c(rnorm(50, 10, 2), rnorm(50, 20, 3), rnorm(50, 15, 4))
-#' )
+#' df <-
+#'   tibble(
+#'     truth = c(rnorm(150, 10, 2)),
+#'     estimate = truth + rnorm(150, 0, 1),
+#'     group = rep(c("A", "B", "C"), each = 50),
+#'     group2 = rep(c("D1", "D2"), each = 75)
+#'   )
 #'
 #' # Simple scatterplot
 #' scatter(df, truth, estimate)
@@ -123,7 +125,7 @@
 #' # ---------------------------------------------------------------------
 #'
 #' # Zoom the visible plotting range without changing the agreement metrics
-#' scatter(df, truth, estimate, plot_range = c(5, 25))
+#' scatter(df, truth, estimate, plot_range = c(6, 12))
 #'
 #'
 #' # Force point-density with ABSOLUTE scale (comparable across facets)

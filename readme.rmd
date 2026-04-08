@@ -65,18 +65,6 @@ tibble(
 scatter(df, truth, estimate)
 ```
 
-The `metrics` argument can be supplied as a named list, which controls the labels shown in the annotation:
-```{r, warning=FALSE, message=FALSE, fig.height=3.5}
-mymetrics <- list(
-  "R²" = rsq,
-  "bias" = md,
-  "bias%" = rmd,
-  "RMSE" = rmse,
-  "RMSE%" = rrmse
-)
-scatter(df, truth, estimate, metrics=mymetrics)
-
-```
 
 Scatterplot for grouped data with agreement metrics:
 
