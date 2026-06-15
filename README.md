@@ -1,10 +1,12 @@
 
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # {scatter}
 
 [![R-CMD-check](https://github.com/ptompalski/scatter/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ptompalski/scatter/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/ptompalski/scatter/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ptompalski/scatter?branch=master)
+[![Codecov test
+coverage](https://codecov.io/gh/ptompalski/scatter/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ptompalski/scatter?branch=master)
 
 This package provides functions for quickly calculating measures of
 model prediction accuracy and creating enhanced scatterplots. The
@@ -57,7 +59,7 @@ tibble(
 scatter(df, truth, estimate)
 ```
 
-![](man/figures/unnamed-chunk-3-1.png)<!-- -->
+![](man/figures/unnamed-chunk-3-1.png)
 
 Scatterplot for grouped data with agreement metrics:
 
@@ -69,7 +71,7 @@ df %>%
   scatter(truth, estimate, metrics=list("R²"=rsq,rmse,mape,msd))
 ```
 
-![](man/figures/unnamed-chunk-4-1.png)<!-- -->
+![](man/figures/unnamed-chunk-4-1.png)
 
 Scatterplot for grouped data with agreement metrics positioned outside
 the plots:
@@ -82,7 +84,47 @@ df %>%
   scatter(truth, estimate, metrics=list(rsq,rmse), metrics_position = "outside")
 ```
 
-![](man/figures/unnamed-chunk-5-1.png)<!-- -->
+![](man/figures/unnamed-chunk-5-1.png)
+
+Paired metrics can be displayed together in the annotation label:
+
+``` r
+df %>%
+  group_by(group) %>%
+  scatter(
+    truth,
+    estimate,
+    metrics = list(
+      "R²" = metric_format(rsq, "{value:.2f}"),
+      RMSE = metric_pair(rmse, rrmse, "{value:.1f} ({percent:.0f}%)"),
+      bias = metric_pair(md, rmd, "{value:.1f} ({percent:.1f}%)")
+    )
+  )
+```
+
+![](man/figures/unnamed-chunk-6-1.png)
+
+Outside metric labels can be split across multiple lines, which is
+useful when including several metrics:
+
+``` r
+df %>%
+  group_by(group) %>%
+  scatter(
+    truth,
+    estimate,
+    metrics = list(
+      "n" = metric_format(n_obs, "{value:.0f}"),
+      "R²" = metric_format(rsq, "{value:.2f}"),
+      RMSE = metric_pair(rmse, rrmse, "{value:.1f} ({percent:.0f}%)"),
+      bias = metric_pair(md, rmd, "{value:.1f} ({percent:.1f}%)")
+    ),
+    metrics_position = "outside",
+    metrics_nlines = 2
+  )
+```
+
+![](man/figures/unnamed-chunk-7-1.png)
 
 ## Scatterplots with large datasets
 
@@ -122,7 +164,7 @@ p2 <- scatter(
 p1 + p2
 ```
 
-![](man/figures/unnamed-chunk-6-1.png)<!-- -->
+![](man/figures/unnamed-chunk-8-1.png)
 
 For convenience, `scatter()` can also switch to this behavior
 automatically using `point_style = "auto"` (default), which enables
@@ -158,4 +200,4 @@ scatterplot):
 scatter(df, truth, estimate, swap_axes = TRUE)
 ```
 
-![](man/figures/unnamed-chunk-7-1.png)<!-- -->
+![](man/figures/unnamed-chunk-9-1.png)

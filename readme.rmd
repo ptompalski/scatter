@@ -20,6 +20,8 @@ knitr::opts_chunk$set(
   dev = "ragg_png",
   dpi = 400
 )
+
+devtools::load_all(".", quiet = TRUE)
 ```
   
 # {scatter}
@@ -89,6 +91,41 @@ The same approach works when positioning metrics outside the panels:
 df %>%
   group_by(group) %>%
   scatter(truth, estimate, metrics=list(rsq,rmse), metrics_position = "outside")
+```
+
+Paired metrics can be displayed together in the annotation label:
+
+```{r, warning=FALSE, message=FALSE, fig.height=3.5}
+df %>%
+  group_by(group) %>%
+  scatter(
+    truth,
+    estimate,
+    metrics = list(
+      "R²" = metric_format(rsq, "{value:.2f}"),
+      RMSE = metric_pair(rmse, rrmse, "{value:.1f} ({percent:.0f}%)"),
+      bias = metric_pair(md, rmd, "{value:.1f} ({percent:.1f}%)")
+    )
+  )
+```
+
+Outside metric labels can be split across multiple lines, which is useful when including several metrics:
+
+```{r, warning=FALSE, message=FALSE, fig.height=3.5}
+df %>%
+  group_by(group) %>%
+  scatter(
+    truth,
+    estimate,
+    metrics = list(
+      "n" = metric_format(n_obs, "{value:.0f}"),
+      "R²" = metric_format(rsq, "{value:.2f}"),
+      RMSE = metric_pair(rmse, rrmse, "{value:.1f} ({percent:.0f}%)"),
+      bias = metric_pair(md, rmd, "{value:.1f} ({percent:.1f}%)")
+    ),
+    metrics_position = "outside",
+    metrics_nlines = 2
+  )
 ```
 
 ## Scatterplots with large datasets 

@@ -15,6 +15,11 @@ test_that("scatter validates required inputs", {
     scatter(df, truth, estimate, metrics_inside_placement = "middle"),
     "Invalid metrics_inside_placement"
   )
+
+  expect_error(
+    scatter(df, truth, estimate, metrics_nlines = 0),
+    "metrics_nlines"
+  )
 })
 
 test_that("scatter returns ggplot objects across core display modes", {
@@ -42,6 +47,7 @@ test_that("scatter returns ggplot objects across core display modes", {
     metrics_nlines = 2
   )
   expect_match(p_outside$labels$subtitle, "R2:")
+  expect_match(p_outside$labels$subtitle, "\n", fixed = TRUE)
 
   p_inside <- scatter(
     df,
@@ -161,8 +167,15 @@ test_that("scatter covers density variants and free-facet branches", {
       metrics_position = "outside",
       facet_scale = "free",
       metrics_nlines = 2
-    )
+  )
   expect_s3_class(p_grouped_outside_single, "ggplot")
+
+  strip_labeller <- p_grouped_outside_single$facet$params$labeller
+  strip_label <- strip_labeller(
+    data.frame(group = unique(df$group)[1], stringsAsFactors = FALSE)
+  )[[1]][[1]]
+  expect_match(strip_label, "<br>", fixed = TRUE)
+  expect_match(strip_label, "font-size:9pt", fixed = TRUE)
 
   p_grouped_outside_single_default_lines <- df |>
     dplyr::group_by(group) |>

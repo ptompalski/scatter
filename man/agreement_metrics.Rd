@@ -8,7 +8,8 @@ agreement_metrics(
   data,
   truth,
   estimate,
-  metrics = list(n = n_obs, yardstick::rsq, md, rmd, yardstick::rmse, rrmse),
+  metrics = list(`R²` = yardstick::rsq, bias = metric_pair(md, rmd), RMSE =
+    metric_pair(yardstick::rmse, rrmse)),
   label = FALSE
 )
 }
@@ -21,8 +22,10 @@ agreement_metrics(
 
 \item{metrics}{A list of metrics to compute. Metrics can be almost any function from the `yardstick`
 package (e.g., `rsq`, `rmse`, `mape`, `msd`), provided they
-follow the `yardstick` format. Defaults to `list(rsq, md, rmd, rmse, rrmse)`.
-Can also be a named list of metrics to compute (e.g. `list(bias = md, "bias%" = rmd)`).
+follow the `yardstick` format. Metrics can also be wrapped with
+`metric_format()` or paired with `metric_pair()` to control labels.
+Can also be a named list of metrics to compute (e.g.
+`list(bias = metric_pair(md, rmd), RMSE = yardstick::rmse)`).
 Names are then used instead of the `yardstick` metric names.}
 
 \item{label}{Logical. If `TRUE`, the function creates a concatenated string summarizing all
@@ -56,6 +59,16 @@ data <- data.frame(
 
 # Compute default metrics
 agreement_metrics(data, truth = truth, estimate = estimate)
+
+agreement_metrics(
+  data,
+  truth = truth,
+  estimate = estimate,
+  metrics = list(
+    RMSE = metric_pair(yardstick::rmse, rrmse, "{value:.1f} ({percent:.0f}\%)")
+  ),
+  label = TRUE
+)
 
 
 }

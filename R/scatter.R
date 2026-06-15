@@ -14,8 +14,10 @@
 #' @param estimate The column name in \code{data} containing estimate values. Should be unquoted.
 #' @param metrics A list of metrics to compute and display. Metrics can include almost any function from the \pkg{yardstick} package
 #'   (e.g., \code{rsq}, \code{rmse}, \code{mape}). This can be either an unnamed list of functions or a named list such as
-#'   \code{list("R\u00B2" = rsq, "bias\%" = rmd)}, in which case the provided names are used in the labels. Defaults to
-#'   \code{list("R\u00B2" = rsq, "bias" = md, "bias\%" = rmd, "RMSE" = rmse, "RMSE\%" = rrmse)}. Set to \code{NULL} to disable.
+#'   \code{list("R\u00B2" = rsq, "bias" = metric_pair(md, rmd))}, in which case the provided names are used in the labels.
+#'   Use \code{metric_pair()} or \code{metric_format()} to control label formatting. Defaults to
+#'   \code{list("R\u00B2" = rsq, "bias" = metric_pair(md, rmd), "RMSE" = metric_pair(rmse, rrmse))}.
+#'   Set to \code{NULL} to disable.
 #' @param metrics_position A character string indicating where to display metrics. Options are \code{"inside"}
 #'   (as annotations within the plot) or \code{"outside"} (as subtitle or facet labels). Defaults to \code{"inside"}.
 #' @param metrics_inside_placement A character string indicating the position of the metrics within the plot.
@@ -49,7 +51,7 @@
 #'   \item{\code{plot_range}}{Optional numeric vector of length 2 giving the visible axis range to use for both x and y axes. This keeps the plotting window square while allowing agreement metrics to still be calculated from all data.}
 #'   \item{\code{text_size}}{Text size (pt) for metrics (default \code{10}).}
 #'   \item{\code{text_background_alpha}}{Transparency of metrics text background (default \code{0.5}; \code{0} disables background).}
-#'   \item{\code{metrics_nlines}}{Split metrics text into multiple lines (default \code{1} line).}
+#'   \item{\code{metrics_nlines}}{When \code{metrics_position = "outside"}, split metrics text into this many lines (default \code{1} line).}
 #'   \item{\code{density_palette}}{Name of viridis palette to use for density mapping: \code{"viridis"}, \code{"magma"}, \code{"plasma"}, \code{"inferno"}, or \code{"cividis"}.}
 #'   \item{\code{density_fixed_color}}{Optional single color (for example \code{"darkred"}) to draw all points, disabling density coloring.}
 #'   \item{\code{density_scale_custom}}{A custom ggplot2 scale (for example \code{scale_color_distiller(palette = "Reds")}) to override the default viridis scale.}
@@ -132,8 +134,7 @@
 #'     estimate,
 #'     metrics = list(
 #'       "R\u00B2" = rsq,
-#'       RMSE = rmse,
-#'       "RMSE%" = rrmse
+#'       RMSE = metric_pair(rmse, rrmse, "{value:.1f} ({percent:.0f}%)")
 #'     ),
 #'     metrics_position = "inside"
 #'   )
@@ -146,6 +147,21 @@
 #'     estimate,
 #'     metrics = list("R\u00B2" = rsq, RMSE = rmse),
 #'     metrics_position = "outside"
+#'   )
+#'
+#' # Format paired metrics and split outside facet labels over multiple lines
+#' df %>%
+#'   group_by(group) %>%
+#'   scatter(
+#'     truth,
+#'     estimate,
+#'     metrics = list(
+#'       "R\u00B2" = metric_format(rsq, "{value:.2f}"),
+#'       RMSE = metric_pair(rmse, rrmse, "{value:.1f} ({percent:.0f}%)"),
+#'       bias = metric_pair(md, rmd, "{value:.1f} ({percent:.1f}%)")
+#'     ),
+#'     metrics_position = "outside",
+#'     metrics_nlines = 2
 #'   )
 #'
 #' # Force point-density with relative scale (0-1 per facet)
@@ -207,12 +223,9 @@ scatter <- function(
   truth,
   estimate,
   metrics = list(
-    "n" = n_obs,
     "R\u00B2" = yardstick::rsq,
-    "bias" = md,
-    "bias%" = rmd,
-    "RMSE" = yardstick::rmse,
-    "RMSE%" = rrmse
+    "bias" = metric_pair(md, rmd),
+    "RMSE" = metric_pair(yardstick::rmse, rrmse)
   ),
   metrics_position = "inside",
   metrics_inside_placement = "upperleft",
@@ -251,6 +264,37 @@ scatter <- function(
         x_blank = dplyr::if_else(which == 1L, rmin, rmax),
         y_blank = dplyr::if_else(which == 1L, rmin, rmax)
       )
+  }
+
+  wrap_metrics_label <- function(label, nlines = 1, line_break = "\n") {
+    if (nlines <= 1) {
+      return(label)
+    }
+
+    parts <- stringr::str_split(label, ";\\s*")[[1]]
+    n_per_line <- ceiling(length(parts) / nlines)
+    grouped_parts <- split(parts, ceiling(seq_along(parts) / n_per_line))
+
+    paste(
+      vapply(
+        grouped_parts,
+        paste,
+        collapse = "; ",
+        FUN.VALUE = character(1)
+      ),
+      collapse = line_break
+    )
+  }
+
+  style_outside_metrics_label <- function(label, text_size) {
+    metrics_text_size <- round(text_size * 0.9, 2)
+    paste0(
+      "<span style='font-size:",
+      metrics_text_size,
+      "pt'>",
+      label,
+      "</span>"
+    )
   }
 
   # ---- ensure columns exist ----
@@ -295,6 +339,16 @@ scatter <- function(
   text_background_alpha <- extra_params$text_background_alpha %||% 0.5
   text_size <- extra_params$text_size %||% 10
   metrics_nlines <- extra_params$metrics_nlines %||% 1
+
+  if (
+    !is.numeric(metrics_nlines) ||
+      length(metrics_nlines) != 1 ||
+      is.na(metrics_nlines) ||
+      metrics_nlines < 1
+  ) {
+    stop("`metrics_nlines` must be a single number greater than or equal to 1.")
+  }
+  metrics_nlines <- as.integer(metrics_nlines)
 
   density_palette <- extra_params$density_palette %||% "viridis"
   density_fixed_color <- extra_params$density_fixed_color %||% NULL
@@ -487,20 +541,7 @@ scatter <- function(
     }
 
     if (metrics_position == "outside") {
-      if (metrics_nlines > 1) {
-        parts <- stringr::str_split(metrics_text, ";\\s*")[[1]]
-        n_per_line <- ceiling(length(parts) / metrics_nlines)
-        grouped_parts <- split(parts, ceiling(seq_along(parts) / n_per_line))
-        metrics_text <- paste(
-          vapply(
-            grouped_parts,
-            paste,
-            collapse = "; ",
-            FUN.VALUE = character(1)
-          ),
-          collapse = "\n"
-        )
-      }
+      metrics_text <- wrap_metrics_label(metrics_text, metrics_nlines, "\n")
       p <- p + ggplot2::labs(subtitle = metrics_text)
     }
   }
@@ -595,26 +636,17 @@ scatter <- function(
             label = {
               label_parts <- stringr::str_split(label, ";\\s*")
               label_wrapped <- purrr::map_chr(label_parts, function(parts) {
-                if (metrics_nlines > 1) {
-                  n_per_line <- ceiling(length(parts) / metrics_nlines)
-                  grouped_parts <- split(
-                    parts,
-                    ceiling(seq_along(parts) / n_per_line)
-                  )
-                  paste(
-                    vapply(
-                      grouped_parts,
-                      paste,
-                      collapse = "; ",
-                      FUN.VALUE = character(1)
-                    ),
-                    collapse = "<br>"
-                  )
-                } else {
-                  paste(parts, collapse = "; ")
-                }
+                wrap_metrics_label(
+                  paste(parts, collapse = "; "),
+                  metrics_nlines,
+                  "<br>"
+                )
               })
-              paste0(!!rlang::sym(gv), "<br>", label_wrapped)
+              paste0(
+                !!rlang::sym(gv),
+                "<br>",
+                style_outside_metrics_label(label_wrapped, text_size)
+              )
             }
           )
 
@@ -651,26 +683,12 @@ scatter <- function(
               collapse = " | "
             ),
             label = {
-              parts <- stringr::str_split(label, ";\\s*")[[1]]
-              wrapped <- if (metrics_nlines > 1) {
-                n_per_line <- ceiling(length(parts) / metrics_nlines)
-                grouped_parts <- split(
-                  parts,
-                  ceiling(seq_along(parts) / n_per_line)
-                )
-                paste(
-                  vapply(
-                    grouped_parts,
-                    paste,
-                    collapse = "; ",
-                    FUN.VALUE = character(1)
-                  ),
-                  collapse = "<br>"
-                )
-              } else {
-                paste(parts, collapse = "; ")
-              }
-              paste0(group_label, "<br>", wrapped)
+              wrapped <- wrap_metrics_label(label, metrics_nlines, "<br>")
+              paste0(
+                group_label,
+                "<br>",
+                style_outside_metrics_label(wrapped, text_size)
+              )
             }
           ) %>%
           dplyr::ungroup()

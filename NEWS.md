@@ -1,3 +1,10 @@
+# scatter 0.1.14 (2026-06-15)
+- Added `n_obs()` / `n_obs_vec()` as yardstick-compatible metrics for counting paired observations.
+- Added `metric_pair()` and `metric_format()` to control how agreement metrics are displayed in labels while preserving numeric metric columns.
+- Updated default agreement metrics to show paired bias and RMSE values with their relative percentages in labels.
+- Added `metrics_nlines` support for splitting outside metric labels across multiple lines.
+- Updated examples, README, documentation, and tests for the new metric display features.
+
 # scatter 0.1.13 (2026-04-08)
 - Added `plot_range` to zoom the visible square plotting window without changing full-data agreement metrics, and to keep inside-plot metric annotations anchored within the visible panel.
 - Moved secondary tuning and layout controls such as `plot_range`, density controls, and `facet_scale` into `...`, leaving the main function signature focused on core behavior.

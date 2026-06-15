@@ -8,8 +8,8 @@ scatter(
   data,
   truth,
   estimate,
-  metrics = list(n = n_obs, `R²` = yardstick::rsq, bias = md, `bias\%` = rmd, RMSE =
-    yardstick::rmse, `RMSE\%` = rrmse),
+  metrics = list(`R²` = yardstick::rsq, bias = metric_pair(md, rmd), RMSE =
+    metric_pair(yardstick::rmse, rrmse)),
   metrics_position = "inside",
   metrics_inside_placement = "upperleft",
   point_style = c("point", "pointdensity", "auto"),
@@ -27,8 +27,10 @@ scatter(
 
 \item{metrics}{A list of metrics to compute and display. Metrics can include almost any function from the \pkg{yardstick} package
 (e.g., \code{rsq}, \code{rmse}, \code{mape}). This can be either an unnamed list of functions or a named list such as
-\code{list("R\u00B2" = rsq, "bias\%" = rmd)}, in which case the provided names are used in the labels. Defaults to
-\code{list("R\u00B2" = rsq, "bias" = md, "bias\%" = rmd, "RMSE" = rmse, "RMSE\%" = rrmse)}. Set to \code{NULL} to disable.}
+\code{list("R\u00B2" = rsq, "bias" = metric_pair(md, rmd))}, in which case the provided names are used in the labels.
+Use \code{metric_pair()} or \code{metric_format()} to control label formatting. Defaults to
+\code{list("R\u00B2" = rsq, "bias" = metric_pair(md, rmd), "RMSE" = metric_pair(rmse, rrmse))}.
+Set to \code{NULL} to disable.}
 
 \item{metrics_position}{A character string indicating where to display metrics. Options are \code{"inside"}
 (as annotations within the plot) or \code{"outside"} (as subtitle or facet labels). Defaults to \code{"inside"}.}
@@ -68,7 +70,7 @@ always computed as \code{metric(truth, estimate)} regardless of axis order.}
   \item{\code{plot_range}}{Optional numeric vector of length 2 giving the visible axis range to use for both x and y axes. This keeps the plotting window square while allowing agreement metrics to still be calculated from all data.}
   \item{\code{text_size}}{Text size (pt) for metrics (default \code{10}).}
   \item{\code{text_background_alpha}}{Transparency of metrics text background (default \code{0.5}; \code{0} disables background).}
-  \item{\code{metrics_nlines}}{Split metrics text into multiple lines (default \code{1} line).}
+  \item{\code{metrics_nlines}}{When \code{metrics_position = "outside"}, split metrics text into this many lines (default \code{1} line).}
   \item{\code{density_palette}}{Name of viridis palette to use for density mapping: \code{"viridis"}, \code{"magma"}, \code{"plasma"}, \code{"inferno"}, or \code{"cividis"}.}
   \item{\code{density_fixed_color}}{Optional single color (for example \code{"darkred"}) to draw all points, disabling density coloring.}
   \item{\code{density_scale_custom}}{A custom ggplot2 scale (for example \code{scale_color_distiller(palette = "Reds")}) to override the default viridis scale.}
@@ -162,8 +164,7 @@ df \%>\%
     estimate,
     metrics = list(
       "R\u00B2" = rsq,
-      RMSE = rmse,
-      "RMSE\%" = rrmse
+      RMSE = metric_pair(rmse, rrmse, "{value:.1f} ({percent:.0f}\%)")
     ),
     metrics_position = "inside"
   )
@@ -176,6 +177,21 @@ df \%>\%
     estimate,
     metrics = list("R\u00B2" = rsq, RMSE = rmse),
     metrics_position = "outside"
+  )
+
+# Format paired metrics and split outside facet labels over multiple lines
+df \%>\%
+  group_by(group) \%>\%
+  scatter(
+    truth,
+    estimate,
+    metrics = list(
+      "R\u00B2" = metric_format(rsq, "{value:.2f}"),
+      RMSE = metric_pair(rmse, rrmse, "{value:.1f} ({percent:.0f}\%)"),
+      bias = metric_pair(md, rmd, "{value:.1f} ({percent:.1f}\%)")
+    ),
+    metrics_position = "outside",
+    metrics_nlines = 2
   )
 
 # Force point-density with relative scale (0-1 per facet)
