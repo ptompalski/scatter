@@ -8,7 +8,7 @@ scatter(
   data,
   truth,
   estimate,
-  metrics = list(`R²` = yardstick::rsq, bias = md, `bias\%` = rmd, RMSE =
+  metrics = list(n = n_obs, `R²` = yardstick::rsq, bias = md, `bias\%` = rmd, RMSE =
     yardstick::rmse, `RMSE\%` = rrmse),
   metrics_position = "inside",
   metrics_inside_placement = "upperleft",

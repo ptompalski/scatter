@@ -5,7 +5,8 @@ test_that("agreement_metrics returns default metrics and labels", {
   )
 
   out <- agreement_metrics(df, truth, estimate)
-  expect_true(all(c("rsq", "md", "rmd", "rmse", "rrmse") %in% names(out)))
+  expect_true(all(c("n", "rsq", "md", "rmd", "rmse", "rrmse") %in% names(out)))
+  expect_equal(out$n, 4)
 
   labeled <- agreement_metrics(
     df,
@@ -20,13 +21,16 @@ test_that("agreement_metrics returns default metrics and labels", {
   expect_match(labeled$label, "rmse: ")
 })
 
-test_that("md, rmd, and rrmse helpers handle core branches", {
+test_that("md, rmd, rrmse, and n_obs helpers handle core branches", {
   df <- tibble::tibble(
     truth = c(10, 20, NA, 40),
     estimate = c(12, 19, 30, 35)
   )
 
   expect_equal(md_vec(c(1, 2), c(2, 4)), 1.5)
+  expect_equal(n_obs_vec(c(1, 2), c(2, 4)), 2)
+  expect_equal(n_obs_vec(c(1, NA), c(2, 4)), 1)
+  expect_true(is.na(n_obs_vec(c(1, NA), c(2, 4), na_rm = FALSE)))
   expect_equal(round(rmd_vec(c(10, 20), c(12, 18)), 2), 0)
   expect_true(is.na(rmd_vec(c(10, NA), c(12, 18), na_rm = FALSE)))
 

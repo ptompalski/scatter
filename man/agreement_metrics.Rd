@@ -8,7 +8,7 @@ agreement_metrics(
   data,
   truth,
   estimate,
-  metrics = list(yardstick::rsq, md, rmd, yardstick::rmse, rrmse),
+  metrics = list(n = n_obs, yardstick::rsq, md, rmd, yardstick::rmse, rrmse),
   label = FALSE
 )
 }

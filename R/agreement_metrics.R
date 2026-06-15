@@ -50,6 +50,7 @@ agreement_metrics <- function(data,
                               truth,
                               estimate,
                               metrics = list(
+                                "n" = n_obs,
                                 yardstick::rsq,
                                 md,
                                 rmd,

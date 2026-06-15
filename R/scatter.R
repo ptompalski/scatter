@@ -207,6 +207,7 @@ scatter <- function(
   truth,
   estimate,
   metrics = list(
+    "n" = n_obs,
     "R\u00B2" = yardstick::rsq,
     "bias" = md,
     "bias%" = rmd,
